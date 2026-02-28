@@ -106,7 +106,7 @@ def list_folder_contents(service, folder_id: str) -> list[dict]:
                 pageSize=100,
                 fields="files(id, name, mimeType)",
             )
-            .execute(timeout=10)
+            .execute()
         )
         return result.get("files", [])
     except Exception as e:
@@ -137,7 +137,7 @@ def get_latest_csv(
                 pageSize=1,
                 fields="files(id, name)",
             )
-            .execute(timeout=10)
+            .execute()
         )
         files = result.get("files", [])
         if not files:
@@ -197,7 +197,7 @@ def read_text_file(service, folder_id: str, filename: str) -> str:
         result = (
             service.files()
             .list(q=q, pageSize=1, fields="files(id, name, mimeType)")
-            .execute(timeout=10)
+            .execute()
         )
         files = result.get("files", [])
         if not files:
