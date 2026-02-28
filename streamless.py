@@ -128,13 +128,19 @@ def get_latest_csv(
 
 def download_file_bytes(service, file_id: str) -> bytes:
     """Download a Drive file and return its raw bytes."""
-    request = service.files().get_media(fileId=file_id)
-    buf = io.BytesIO()
-    downloader = MediaIoBaseDownload(buf, request)
-    done = False
-    while not done:
-        _, done = downloader.next_chunk()
-    return buf.getvalue()
+    try:
+        request = service.files().get_media(fileId=file_id)
+        buf = io.BytesIO()
+        downloader = MediaIoBaseDownload(buf, request, chunksize=256*1024)
+        done = False
+        while not done:
+            try:
+                _, done = downloader.next_chunk(timeout=10)
+            except Exception:
+                break  # timeout or error
+        return buf.getvalue()
+    except Exception:
+        return b""  # Return empty bytes on error
 
 
 def download_csv_as_df(service, file_id: str) -> pd.DataFrame:
@@ -147,37 +153,43 @@ def read_text_file(service, folder_id: str, filename: str) -> str:
     """
     Find *filename* inside *folder_id* and return its decoded text content.
     Handles both plain text files and Google Docs native format.
-    Returns empty string if not found.
+    Returns empty string if not found or on error.
     """
-    q = (
-        f"'{folder_id}' in parents"
-        f" and name='{filename}'"
-        " and trashed=false"
-    )
-    result = (
-        service.files()
-        .list(q=q, pageSize=1, fields="files(id, name, mimeType)")
-        .execute()
-    )
-    files = result.get("files", [])
-    if not files:
-        return ""
-    file_id = files[0]["id"]
-    mime_type = files[0].get("mimeType", "")
+    try:
+        q = (
+            f"'{folder_id}' in parents"
+            f" and name='{filename}'"
+            " and trashed=false"
+        )
+        result = (
+            service.files()
+            .list(q=q, pageSize=1, fields="files(id, name, mimeType)", timeout=10)
+            .execute(timeout=10)
+        )
+        files = result.get("files", [])
+        if not files:
+            return ""
+        file_id = files[0]["id"]
+        mime_type = files[0].get("mimeType", "")
 
-    # Google Docs native format → use export
-    if mime_type == "application/vnd.google-apps.document":
-        buf = io.BytesIO()
-        request = service.files().export_media(fileId=file_id, mimeType="text/plain")
-        downloader = MediaIoBaseDownload(buf, request)
-        done = False
-        while not done:
-            _, done = downloader.next_chunk()
-        return buf.getvalue().decode("utf-8", errors="replace")
+        # Google Docs native format → use export
+        if mime_type == "application/vnd.google-apps.document":
+            buf = io.BytesIO()
+            request = service.files().export_media(fileId=file_id, mimeType="text/plain")
+            downloader = MediaIoBaseDownload(buf, request, chunksize=256*1024)
+            done = False
+            while not done:
+                try:
+                    _, done = downloader.next_chunk(timeout=10)
+                except Exception as chunk_err:
+                    return ""  # timeout or error, return empty
+            return buf.getvalue().decode("utf-8", errors="replace")
 
-    # Plain file → use get_media
-    raw = download_file_bytes(service, file_id)
-    return raw.decode("utf-8", errors="replace")
+        # Plain file → use get_media
+        raw = download_file_bytes(service, file_id)
+        return raw.decode("utf-8", errors="replace")
+    except Exception:
+        return ""  # Any error, return empty string gracefully
 
 
 # ---------------------------------------------------------------------------
