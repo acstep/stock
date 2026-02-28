@@ -105,7 +105,6 @@ def list_folder_contents(service, folder_id: str) -> list[dict]:
                 q=f"'{folder_id}' in parents and trashed=false",
                 pageSize=100,
                 fields="files(id, name, mimeType)",
-                timeout=10,
             )
             .execute(timeout=10)
         )
@@ -137,7 +136,6 @@ def get_latest_csv(
                 orderBy="modifiedTime desc",
                 pageSize=1,
                 fields="files(id, name)",
-                timeout=10,
             )
             .execute(timeout=10)
         )
@@ -198,7 +196,7 @@ def read_text_file(service, folder_id: str, filename: str) -> str:
         )
         result = (
             service.files()
-            .list(q=q, pageSize=1, fields="files(id, name, mimeType)", timeout=10)
+            .list(q=q, pageSize=1, fields="files(id, name, mimeType)")
             .execute(timeout=10)
         )
         files = result.get("files", [])
