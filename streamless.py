@@ -45,9 +45,9 @@ PROMPT_FILENAME = "barchart_prompt.txt"
 
 CSV_TARGETS = [
     ("$SPX", "volume"),
-    # ("$SPX", "delta"),
-    # ("$NDX", "volume"),
-    # ("$NDX", "delta"),
+    ("$SPX", "delta"),
+    ("$NDX", "volume"),
+    ("$NDX", "delta"),
 ]
 
 # ---------------------------------------------------------------------------
@@ -209,9 +209,16 @@ def df_to_markdown(title: str, df: pd.DataFrame) -> str:
 def run_gemini_analysis(prompt_text: str, markdown_tables: list[str]) -> str:
     """Call Gemini 2.0 Flash and return the raw response text."""
     genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
-    model = genai.GenerativeModel("gemini-2.0-flash")
+    model = genai.GenerativeModel("gemini-2.5-flash")
 
-    full_prompt = "請用一句話回答：今天天氣如何？"
+    tables_block = "\n\n".join(markdown_tables)
+    full_prompt = (
+        f"{prompt_text}\n\n"
+        f"以下是最新的四份數據表格（Markdown 格式）：\n\n"
+        f"{tables_block}\n\n"
+        "請根據上方的分析指引與數據，僅輸出一段完整的 HTML + CSS 代碼，"
+        "不要包含任何其他說明文字或 Markdown 標記。"
+    )
     response = model.generate_content(full_prompt)
     return response.text
 
