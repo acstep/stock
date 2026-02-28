@@ -110,23 +110,28 @@ def get_latest_csv(
         " and mimeType='text/csv'"
         " and trashed=false"
     )
-    result = (
-        service.files()
-        .list(
-            q=q,
-            orderBy="modifiedTime desc",
-            pageSize=1,
-            fields="files(id, name)",
+    try:
+        result = (
+            service.files()
+            .list(
+                q=q,
+                orderBy="modifiedTime desc",
+                pageSize=1,
+                fields="files(id, name)",
+                timeout=10,
+            )
+            .execute(timeout=10)
         )
-        .execute()
-    )
-    files = result.get("files", [])
-    if not files:
+        files = result.get("files", [])
+        if not files:
+            return None, None
+        return files[0]["id"], files[0]["name"]
+    except Exception as e:
+        st.error(f"🔴 搜尋 {symbol} {suffix} CSV 時出錯：{e}")
         return None, None
-    return files[0]["id"], files[0]["name"]
 
 
-def download_file_bytes(service, file_id: str) -> bytes:
+def download_file_bytes(service, file_id: str, filename: str = "") -> bytes:
     """Download a Drive file and return its raw bytes."""
     try:
         request = service.files().get_media(fileId=file_id)
@@ -136,21 +141,27 @@ def download_file_bytes(service, file_id: str) -> bytes:
         while not done:
             try:
                 _, done = downloader.next_chunk(timeout=10)
-            except Exception:
-                break  # timeout or error
-        return buf.getvalue()
-    except Exception:
-        return b""  # Return empty bytes on error
+            except Exception as e:
+                st.warning(f"⚠️ 下載 {filename} 時超時或出錯：{e}")
+                break
+        result = buf.getvalue()
+        if len(result) == 0:
+            st.warning(f"⚠️ {filename} 下載為空，可能是存取權限限制")
+        return result
+    except Exception as e:
+        st.warning(f"⚠️ 無法下載 {filename}：{e}")
+        return b""
 
 
-def download_csv_as_df(service, file_id: str) -> pd.DataFrame:
+def download_csv_as_df(service, file_id: str, filename: str = "") -> pd.DataFrame:
     """Download a CSV file from Drive and return a DataFrame."""
-    raw = download_file_bytes(service, file_id)
+    raw = download_file_bytes(service, file_id, filename)
     if not raw or len(raw) == 0:
         return pd.DataFrame()  # Return empty DataFrame if download failed
     try:
         return pd.read_csv(io.BytesIO(raw))
-    except Exception:
+    except Exception as e:
+        st.warning(f"⚠️ 解析 {filename} CSV 失敗：{e}")
         return pd.DataFrame()  # Return empty DataFrame if parsing fails
 
 
@@ -191,7 +202,7 @@ def read_text_file(service, folder_id: str, filename: str) -> str:
             return buf.getvalue().decode("utf-8", errors="replace")
 
         # Plain file → use get_media
-        raw = download_file_bytes(service, file_id)
+        raw = download_file_bytes(service, file_id, filename)
         return raw.decode("utf-8", errors="replace")
     except Exception:
         return ""  # Any error, return empty string gracefully
@@ -335,7 +346,7 @@ def main():
                     st.warning(f"⚠️ 找不到 {label} 的 CSV 檔案，將略過。")
                     continue
                 st.write(f"  ✅ {label} → `{file_name}`")
-                df = download_csv_as_df(service, file_id)
+                df = download_csv_as_df(service, file_id, file_name)
                 if df.empty:
                     st.warning(f"⚠️ {label} CSV 下載或解析失敗，將略過。")
                     missing.append(label)
