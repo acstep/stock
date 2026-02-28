@@ -146,6 +146,7 @@ def download_csv_as_df(service, file_id: str) -> pd.DataFrame:
 def read_text_file(service, folder_id: str, filename: str) -> str:
     """
     Find *filename* inside *folder_id* and return its decoded text content.
+    Handles both plain text files and Google Docs native format.
     Returns empty string if not found.
     """
     q = (
@@ -155,13 +156,27 @@ def read_text_file(service, folder_id: str, filename: str) -> str:
     )
     result = (
         service.files()
-        .list(q=q, pageSize=1, fields="files(id, name)")
+        .list(q=q, pageSize=1, fields="files(id, name, mimeType)")
         .execute()
     )
     files = result.get("files", [])
     if not files:
         return ""
-    raw = download_file_bytes(service, files[0]["id"])
+    file_id = files[0]["id"]
+    mime_type = files[0].get("mimeType", "")
+
+    # Google Docs native format → use export
+    if mime_type == "application/vnd.google-apps.document":
+        buf = io.BytesIO()
+        request = service.files().export_media(fileId=file_id, mimeType="text/plain")
+        downloader = MediaIoBaseDownload(buf, request)
+        done = False
+        while not done:
+            _, done = downloader.next_chunk()
+        return buf.getvalue().decode("utf-8", errors="replace")
+
+    # Plain file → use get_media
+    raw = download_file_bytes(service, file_id)
     return raw.decode("utf-8", errors="replace")
 
 
