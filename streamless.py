@@ -96,6 +96,25 @@ def ensure_folder(service, name: str, parent_id: str) -> str:
     return folder["id"]
 
 
+def list_folder_contents(service, folder_id: str) -> list[dict]:
+    """List all files and folders inside folder_id."""
+    try:
+        result = (
+            service.files()
+            .list(
+                q=f"'{folder_id}' in parents and trashed=false",
+                pageSize=100,
+                fields="files(id, name, mimeType)",
+                timeout=10,
+            )
+            .execute(timeout=10)
+        )
+        return result.get("files", [])
+    except Exception as e:
+        st.error(f"🔴 無法列出文件夾內容：{e}")
+        return []
+
+
 def get_latest_csv(
     service, folder_id: str, symbol: str, suffix: str
 ) -> tuple[str, str] | tuple[None, None]:
@@ -330,6 +349,11 @@ def main():
             if not barchart_id:
                 status.update(label=f"找不到 {TARGET_FOLDER_NAME} 資料夾", state="error")
                 st.error(f"Google Drive 中找不到 '{TARGET_FOLDER_NAME}' 資料夾。")
+                st.info(
+                    f"💡 如果資料夾存在，請確保已分享給："
+                    f"\n`streamlit-google-drive@stock-488810.iam.gserviceaccount.com`"
+                    f"\n並且權限設為「編輯者」。"
+                )
                 st.stop()
             st.session_state["barchart_folder_id"] = barchart_id
 
@@ -356,6 +380,18 @@ def main():
             if not markdown_tables:
                 status.update(label="未找到任何 CSV 檔案", state="error")
                 st.error("所有 CSV 均無法取得，請確認 Drive 資料夾內容。")
+                
+                # 診斷：列出 BARCHART 文件夾中的所有文件
+                st.info("📂 診斷：BARCHART 文件夾中的所有文件：")
+                files = list_folder_contents(service, barchart_id)
+                if files:
+                    for f in files:
+                        mime = f.get("mimeType", "unknown")
+                        icon = "📁" if "folder" in mime else "📄"
+                        st.write(f"  {icon} {f['name']} ({mime})")
+                else:
+                    st.warning("  ⚠️ 文件夾是空的，或者服務帳戶沒有存取權限")
+                
                 st.stop()
 
             # 4. Read prompt file
