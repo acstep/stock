@@ -342,6 +342,8 @@ def main():
 
             # 5. Gemini analysis
             st.write("🤖 呼叫 Gemini 2.0 Flash 生成 HTML 報告…")
+            _key = st.secrets.get("GEMINI_API_KEY", "")
+            st.caption(f"使用 Key：`{_key[:12]}...`（前12碼）")
             try:
                 raw_response = run_gemini_analysis(prompt_text, markdown_tables)
                 html_report = extract_html(raw_response)
