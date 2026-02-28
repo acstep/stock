@@ -184,14 +184,22 @@ def read_text_file(service, folder_id: str, filename: str) -> str:
 # Data helpers
 # ---------------------------------------------------------------------------
 
+MAX_ROWS = 80  # cap rows per table to limit token usage
+
 def df_to_markdown(title: str, df: pd.DataFrame) -> str:
     """Convert a DataFrame to a Markdown table with a section heading."""
+    if len(df) > MAX_ROWS:
+        df = df.head(MAX_ROWS)
+        truncated = True
+    else:
+        truncated = False
     try:
         table = df.to_markdown(index=False)
     except Exception:
         # Fallback if tabulate is unavailable
         table = df.to_string(index=False)
-    return f"### {title}\n\n{table}"
+    note = f"\n\n> ⚠️ 資料已截斷，僅顯示前 {MAX_ROWS} 列。" if truncated else ""
+    return f"### {title}\n\n{table}{note}"
 
 
 # ---------------------------------------------------------------------------
