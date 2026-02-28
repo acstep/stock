@@ -121,9 +121,12 @@ def get_latest_csv(
     Return (file_id, file_name) for the most-recently modified CSV whose
     name contains *symbol* and ends with *-{suffix}.csv*.
     """
+    # Remove $ from symbol for searching (e.g. "$SPX" → search "SPX")
+    symbol_search = symbol.replace("$", "")
+    
     q = (
         f"'{folder_id}' in parents"
-        f" and name contains '{symbol}'"
+        f" and name contains '{symbol_search}'"
         f" and name contains '-{suffix}.csv'"
         " and mimeType='text/csv'"
         " and trashed=false"
@@ -157,7 +160,7 @@ def download_file_bytes(service, file_id: str, filename: str = "") -> bytes:
         done = False
         while not done:
             try:
-                _, done = downloader.next_chunk(timeout=10)
+                _, done = downloader.next_chunk()
             except Exception as e:
                 st.warning(f"⚠️ 下載 {filename} 時超時或出錯：{e}")
                 break
@@ -213,7 +216,7 @@ def read_text_file(service, folder_id: str, filename: str) -> str:
             done = False
             while not done:
                 try:
-                    _, done = downloader.next_chunk(timeout=10)
+                    _, done = downloader.next_chunk()
                 except Exception as chunk_err:
                     return ""  # timeout or error, return empty
             return buf.getvalue().decode("utf-8", errors="replace")
