@@ -286,7 +286,12 @@ def main():
 
             # 2. Locate BARCHART folder
             st.write(f"📁 搜尋 {TARGET_FOLDER_NAME} 資料夾…")
-            barchart_id = find_folder(service, TARGET_FOLDER_NAME)
+            try:
+                barchart_id = find_folder(service, TARGET_FOLDER_NAME)
+            except Exception as e:
+                status.update(label="Drive API 錯誤", state="error")
+                st.error(f"Drive API 錯誤詳情：{e}")
+                st.stop()
             if not barchart_id:
                 status.update(label=f"找不到 {TARGET_FOLDER_NAME} 資料夾", state="error")
                 st.error(f"Google Drive 中找不到 '{TARGET_FOLDER_NAME}' 資料夾。")
