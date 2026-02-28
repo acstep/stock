@@ -146,7 +146,12 @@ def download_file_bytes(service, file_id: str) -> bytes:
 def download_csv_as_df(service, file_id: str) -> pd.DataFrame:
     """Download a CSV file from Drive and return a DataFrame."""
     raw = download_file_bytes(service, file_id)
-    return pd.read_csv(io.BytesIO(raw))
+    if not raw or len(raw) == 0:
+        return pd.DataFrame()  # Return empty DataFrame if download failed
+    try:
+        return pd.read_csv(io.BytesIO(raw))
+    except Exception:
+        return pd.DataFrame()  # Return empty DataFrame if parsing fails
 
 
 def read_text_file(service, folder_id: str, filename: str) -> str:
@@ -331,6 +336,10 @@ def main():
                     continue
                 st.write(f"  ✅ {label} → `{file_name}`")
                 df = download_csv_as_df(service, file_id)
+                if df.empty:
+                    st.warning(f"⚠️ {label} CSV 下載或解析失敗，將略過。")
+                    missing.append(label)
+                    continue
                 markdown_tables.append(df_to_markdown(f"{label} ({file_name})", df))
 
             if not markdown_tables:
