@@ -3,52 +3,48 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>專業全點位曝險分析 | ES & NQ 實戰指南</title>
+    <title>GEX 全點位元深度分析 | ES & NQ 實戰戰報</title>
     <style>
         :root {
-            --bg: #0d1117; --card: #161b22; --header: #010409; --text: #c9d1d9;
-            --primary: #58a6ff; --up: #238636; --down: #da3633; --warning: #d29922;
-            --grid: #30363d;
+            --bg: #0f172a; --card: #1e293b; --header: #1e293b; --text: #f8fafc;
+            --primary: #38bdf8; --up: #10b981; --down: #ef4444; --warning: #f59e0b;
         }
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: var(--bg); color: var(--text); padding: 20px; margin: 0; line-height: 1.6; }
-        .container { max-width: 1400px; margin: 0 auto; }
-        
+        body { font-family: 'Inter', system-ui, sans-serif; background: var(--bg); color: var(--text); padding: 20px; line-height: 1.5; }
+        .container { max-width: 1200px; margin: 0 auto; }
         header { 
-            background: var(--header); padding: 30px; border-radius: 12px; 
-            border: 1px solid var(--grid); border-bottom: 4px solid var(--primary); margin-bottom: 25px;
+            background: var(--header); padding: 25px; border-radius: 12px; 
+            border-bottom: 4px solid var(--primary); margin-bottom: 30px;
             display: flex; justify-content: space-between; align-items: center;
         }
-        .basis-badge { background: #0d1117; padding: 12px 20px; border-radius: 8px; border: 1px solid var(--grid); font-family: monospace; font-size: 1.1rem; }
-
-        .dashboard-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-        @media (max-width: 1100px) { .dashboard-grid { grid-template-columns: 1fr; } }
-
-        .card { background: var(--card); border-radius: 12px; padding: 25px; border: 1px solid var(--grid); }
-        .card h2 { margin-top: 0; color: var(--primary); border-bottom: 1px solid var(--grid); padding-bottom: 15px; font-size: 1.5rem; }
-
-        /* Full GEX Profile Chart Area */
-        .gex-profile { background: #010409; padding: 15px; border-radius: 8px; margin: 20px 0; border: 1px solid var(--grid); height: 500px; overflow-y: auto; }
-        .chart-row { display: flex; align-items: center; height: 12px; margin-bottom: 2px; }
-        .strike-label { width: 60px; font-size: 0.65rem; color: #8b949e; text-align: right; margin-right: 15px; font-family: monospace; }
-        .bar-area { flex-grow: 1; height: 100%; position: relative; }
-        .axis-y { position: absolute; left: 50%; top: -2px; bottom: -2px; border-left: 1px dashed #30363d; z-index: 2; }
-        .bar { position: absolute; height: 90%; border-radius: 1px; }
-        .bar.pos { left: 50%; }
-        .bar.neg { right: 50%; }
-
-        /* Info Table */
-        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-        th { text-align: left; color: #8b949e; padding: 12px; font-size: 0.8rem; border-bottom: 1px solid var(--grid); }
-        td { padding: 12px; border-bottom: 1px solid #21262d; font-size: 0.95rem; font-weight: 600; }
+        .basis-badge { background: #0a1120; padding: 10px 15px; border-radius: 8px; border: 1px solid #334155; font-size: 0.9rem; }
+        .market-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; }
+        @media (max-width: 900px) { .market-grid { grid-template-columns: 1fr; } }
         
-        .level-tag { padding: 3px 8px; border-radius: 5px; font-size: 0.7rem; font-weight: bold; }
-        .cw { background: rgba(35, 134, 54, 0.2); color: #3fb950; border: 1px solid #238636; }
-        .pw { background: rgba(218, 54, 51, 0.2); color: #f85149; border: 1px solid #da3633; }
-        .flip { background: rgba(210, 153, 34, 0.2); color: #d29922; border: 1px solid #9e6a03; }
+        .card { background: var(--card); border-radius: 16px; padding: 20px; border: 1px solid #334155; }
+        .card h2 { margin-top: 0; color: var(--primary); font-size: 1.3rem; border-bottom: 1px solid #334155; padding-bottom: 10px; }
 
-        .strategy-section { margin-top: 30px; background: #161b22; padding: 30px; border-radius: 12px; border: 1px solid var(--grid); border-left: 10px solid var(--warning); }
-        .strategy-item h4 { color: var(--primary); margin-bottom: 8px; margin-top: 0; }
-        .strategy-content { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
+        /* GEX Profile Chart Area */
+        .gex-profile { 
+            background: #070b14; padding: 15px 10px; border-radius: 10px; 
+            margin: 20px 0; border: 1px solid #1e293b;
+            height: 500px; overflow-y: auto; /* 啟用捲軸以顯示大量數據 */
+        }
+        .chart-row { display: flex; align-items: center; margin-bottom: 2px; height: 14px; }
+        .strike-label { width: 60px; font-size: 0.65rem; color: #64748b; text-align: right; margin-right: 12px; font-family: monospace; }
+        .bar-area { flex-grow: 1; height: 100%; position: relative; display: flex; align-items: center; }
+        .axis-line { position: absolute; left: 50%; top: -5px; bottom: -5px; border-left: 1px dashed #475569; z-index: 2; }
+        .bar { position: absolute; height: 80%; border-radius: 1px; }
+        .bar.pos { left: 50%; background: var(--up); }
+        .bar.neg { right: 50%; background: var(--down); }
+
+        /* Level Tags */
+        .tag { padding: 3px 6px; border-radius: 4px; font-size: 0.7rem; font-weight: bold; }
+        .bg-up { background: rgba(16, 185, 129, 0.2); color: var(--up); }
+        .bg-down { background: rgba(239, 68, 68, 0.2); color: var(--down); }
+        .bg-flip { background: rgba(245, 158, 11, 0.2); color: var(--warning); }
+        
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 0.9rem; }
+        td { padding: 10px 8px; border-bottom: 1px solid #1e293b; }
     </style>
 </head>
 <body>
@@ -56,76 +52,60 @@
 <div class="container">
     <header>
         <div>
-            <h1 style="margin:0">📊 美股期貨深度對沖戰報 (Full GEX Profiling)</h1>
-            <div style="color:#8b949e; margin-top:5px;">數據校準點位：2026-03-01 23:00 | 實時監測：Gemini Quant Suite</div>
+            <h1 style="margin:0">📊 專業全點位曝險剖面 (GEX Profile)</h1>
+            <div style="color:#94a3b8; font-size:0.85rem;">更新時間：2026-03-01 23:05 | 數據校準：Real-time Modelling</div>
         </div>
         <div class="basis-badge">
-            <span style="color:#8b949e">基差校準:</span> ES <span style="color:var(--primary)">+10.12</span> | NQ <span style="color:var(--primary)">+44.71</span>
+            <span style="color:#94a3b8">校準基差:</span> ES <span style="color:var(--primary)">+10.59</span> | NQ <span style="color:var(--primary)">+44.71</span>
         </div>
     </header>
 
-    <div class="dashboard-grid">
+    <div class="market-grid">
         <div class="card">
-            <h2>ES (標普期貨) 曝險剖面 (+/- 220 點)</h2>
+            <h2>ES (標普期貨) 曝險剖面 (上下 220 點)</h2>
             <div class="gex-profile">
-                <div class="chart-row"><div class="strike-label">7089</div><div class="bar-area"><div class="axis-y"></div><div class="bar pos" style="width: 25%; background: var(--up);"></div></div></div>
-                <div class="chart-row"><div class="strike-label">...</div><div class="bar-area"><div class="axis-y"></div></div></div>
-                <div class="chart-row"><div class="strike-label">6920</div><div class="bar-area"><div class="axis-y"></div><div class="bar pos" style="width: 50%; background: var(--up); box-shadow: 0 0 8px #238636aa;"></div></div></div>
-                <div class="chart-row"><div class="strike-label">6910</div><div class="bar-area"><div class="axis-y"></div><div class="bar pos" style="width: 48%; background: var(--up);"></div></div></div>
-                <div class="chart-row"><div class="strike-label">6899</div><div class="bar-area"><div class="axis-y" style="border-left: 2px solid var(--primary);"></div><span style="font-size:0.6rem; color:var(--primary); position:absolute; left:55%;">SPOT</span></div></div>
-                <div class="chart-row"><div class="strike-label">6880</div><div class="bar-area"><div class="axis-y"></div><div class="bar pos" style="width: 15%; background: var(--up);"></div></div></div>
-                <div class="chart-row"><div class="strike-label">6857</div><div class="bar-area"><div class="axis-y"></div><div class="bar neg" style="width: 3%; background: var(--warning);"></div></div></div>
-                <div class="chart-row"><div class="strike-label">6810</div><div class="bar-area"><div class="axis-y"></div><div class="bar neg" style="width: 45%; background: var(--down);"></div></div></div>
-                <div class="chart-row"><div class="strike-label">...</div><div class="bar-area"><div class="axis-y"></div></div></div>
-                <div class="chart-row"><div class="strike-label">6689</div><div class="bar-area"><div class="axis-y"></div><div class="bar neg" style="width: 15%; background: var(--down);"></div></div></div>
+                <div class="chart-row"><div class="strike-label">7089</div><div class="bar-area"><div class="axis-line"></div><div class="bar pos" style="width: 25%;"></div></div></div>
+                <div class="chart-row"><div class="strike-label">...</div><div class="bar-area"><div class="axis-line"></div></div></div>
+                <div class="chart-row"><div class="strike-label">6920</div><div class="bar-area"><div class="axis-line"></div><div class="bar pos" style="width: 50%; box-shadow: 0 0 8px #10b981aa;"></div></div></div>
+                <div class="chart-row"><div class="strike-label">6910</div><div class="bar-area"><div class="axis-line"></div><div class="bar pos" style="width: 48%;"></div></div></div>
+                <div class="chart-row"><div class="strike-label">6889</div><div class="bar-area"><div class="axis-line" style="border-left: 2px solid var(--primary);"></div><span style="font-size:0.6rem; color:var(--primary); margin-left:55%;">SPOT</span></div></div>
+                <div class="chart-row"><div class="strike-label">6880</div><div class="bar-area"><div class="axis-line"></div><div class="bar pos" style="width: 15%;"></div></div></div>
+                <div class="chart-row"><div class="strike-label">6857</div><div class="bar-area"><div class="axis-line"></div><div class="bar neg" style="width: 3%; background: var(--warning);"></div></div></div>
+                <div class="chart-row"><div class="strike-label">6810</div><div class="bar-area"><div class="axis-line"></div><div class="bar neg" style="width: 45%;"></div></div></div>
+                <div class="chart-row"><div class="strike-label">...</div><div class="bar-area"><div class="axis-line"></div></div></div>
+                <div class="chart-row"><div class="strike-label">6689</div><div class="bar-area"><div class="axis-line"></div><div class="bar neg" style="width: 15%;"></div></div></div>
             </div>
             <table>
-                <thead><tr><th>期貨點位</th><th>性質</th><th>操作指引</th></tr></thead>
-                <tbody>
-                    <tr><td>6910.12</td><td><span class="level-tag cw">CALL WALL</span></td><td style="color:#f85149">天花板 / 極強壓力 / 短空</td></tr>
-                    <tr><td>6889.00</td><td><span style="color:#58a6ff">SPOT</span></td><td>現價震盪平衡點</td></tr>
-                    <tr><td>6857.62</td><td><span class="level-tag flip">GAMMA FLIP</span></td><td style="color:#3fb950">生死線 / 多空轉折 / 接多點</td></tr>
-                    <tr><td>6810.12</td><td><span class="level-tag pw">PUT WALL</span></td><td>物理地板 / 極限防守支撐</td></tr>
-                </tbody>
+                <tr><td><strong>6910.59</strong></td><td><span class="tag bg-up">CALL WALL</span></td><td>最強壓力/短空點</td></tr>
+                <tr><td><strong>6857.00</strong></td><td><span class="tag bg-flip">GAMMA FLIP</span></td><td>生死線/回調接多</td></tr>
+                <tr><td><strong>6810.59</strong></td><td><span class="tag bg-down">PUT WALL</span></td><td>最終防禦支撐</td></tr>
             </table>
         </div>
 
         <div class="card">
-            <h2>NQ (那指期貨) 曝險剖面 (+/- 1000 點)</h2>
+            <h2>NQ (那指期貨) 曝險剖面 (上下 1000 點)</h2>
             <div class="gex-profile">
-                <div class="chart-row"><div class="strike-label">26000</div><div class="bar-area"><div class="axis-y"></div><div class="bar pos" style="width: 30%; background: var(--up);"></div></div></div>
-                <div class="chart-row"><div class="strike-label">...</div><div class="bar-area"><div class="axis-y"></div></div></div>
-                <div class="chart-row"><div class="strike-label">25184</div><div class="bar-area"><div class="axis-y"></div><div class="bar pos" style="width: 50%; background: var(--up); box-shadow: 0 0 8px #238636aa;"></div></div></div>
-                <div class="chart-row"><div class="strike-label">25004</div><div class="bar-area"><div class="axis-y" style="border-left: 2px solid var(--primary);"></div><span style="font-size:0.6rem; color:var(--primary); position:absolute; left:55%;">SPOT</span></div></div>
-                <div class="chart-row"><div class="strike-label">24864</div><div class="bar-area"><div class="axis-y"></div><div class="bar neg" style="width: 48%; background: var(--down);"></div></div></div>
-                <div class="chart-row"><div class="strike-label">24829</div><div class="bar-area"><div class="axis-y"></div><div class="bar neg" style="width: 8%; background: var(--warning);"></div></div></div>
-                <div class="chart-row"><div class="strike-label">...</div><div class="bar-area"><div class="axis-y"></div></div></div>
-                <div class="chart-row"><div class="strike-label">24000</div><div class="bar-area"><div class="axis-y"></div><div class="bar neg" style="width: 20%; background: var(--down);"></div></div></div>
+                <div class="chart-row"><div class="strike-label">26004</div><div class="bar-area"><div class="axis-line"></div><div class="bar pos" style="width: 30%;"></div></div></div>
+                <div class="chart-row"><div class="strike-label">...</div><div class="bar-area"><div class="axis-line"></div></div></div>
+                <div class="chart-row"><div class="strike-label">25184</div><div class="bar-area"><div class="axis-line"></div><div class="bar pos" style="width: 50%; box-shadow: 0 0 8px #10b981aa;"></div></div></div>
+                <div class="chart-row"><div class="strike-label">25004</div><div class="bar-area"><div class="axis-line" style="border-left: 2px solid var(--primary);"></div><span style="font-size:0.6rem; color:var(--primary); margin-left:55%;">SPOT</span></div></div>
+                <div class="chart-row"><div class="strike-label">24864</div><div class="bar-area"><div class="axis-line"></div><div class="bar neg" style="width: 48%;"></div></div></div>
+                <div class="chart-row"><div class="strike-label">24829</div><div class="bar-area"><div class="axis-line"></div><div class="bar neg" style="width: 8%; background: var(--warning);"></div></div></div>
+                <div class="chart-row"><div class="strike-label">...</div><div class="bar-area"><div class="axis-line"></div></div></div>
+                <div class="chart-row"><div class="strike-label">24004</div><div class="bar-area"><div class="axis-line"></div><div class="bar neg" style="width: 20%;"></div></div></div>
             </div>
             <table>
-                <thead><tr><th>期貨點位</th><th>性質</th><th>操作指引</th></tr></thead>
-                <tbody>
-                    <tr><td>25184.71</td><td><span class="level-tag cw">CALL WALL</span></td><td style="color:#f85149">絕對壓力 / 逢高減倉 / 短空</td></tr>
-                    <tr><td>25004.75</td><td><span style="color:#58a6ff">SPOT</span></td><td>現價密集爭奪區</td></tr>
-                    <tr><td>24829.71</td><td><span class="level-tag flip">GAMMA FLIP</span></td><td style="color:#3fb950">生死守護線 / 多空分水嶺</td></tr>
-                    <tr><td>24864.21</td><td><span class="level-tag pw">PUT WALL</span></td><td>強大買盤區 / 地板支撐</td></tr>
-                </tbody>
+                <tr><td><strong>25184.71</strong></td><td><span class="tag bg-up">CALL WALL</span></td><td>絕對天花板/止盈</td></tr>
+                <tr><td><strong>24829.71</strong></td><td><span class="tag bg-flip">GAMMA FLIP</span></td><td>生死線/多空分水嶺</td></tr>
+                <tr><td><strong>24864.71</strong></td><td><span class="tag bg-down">PUT WALL</span></td><td>強大買盤區</td></tr>
             </table>
         </div>
     </div>
 
-    <div class="strategy-section">
-        <h3 style="color:var(--warning); margin-top:0;">⚡ 短線實戰操作深度解析</h3>
-        <div class="strategy-content">
-            <div class="strategy-item">
-                <h4>1. ES (標普期貨) 操作要點：</h4>
-                <p>目前 ES 正處於「正 Gamma」環境中。當價格回調至 <strong>6867 - 6875</strong>（靠近 Gamma Flip 點）時，市場會出現物理彈性，是左側接多的黃金區域。只要 6857 不破，短期趨勢偏多。反之，當價格衝擊 <strong>6910</strong> 失敗時，做市商的拋盤會湧現，此處應考慮獲利了結或反手短空。</p>
-            </div>
-            <div class="strategy-item">
-                <h4>2. NQ (那指期貨) 操作要點：</h4>
-                <p>NQ 目前在 <strong>25000</strong> 整數關口徘徊。下方的最強物理支撐位於 <strong>24829 - 24864</strong> 區間（Flip 與 PW 的合力區）。操作上應以該區間為底限進行多頭博弈，停損設定於 24810 以下。上行目標鎖定在 <strong>25184</strong> 的 Call Wall 壓力點。</p>
-            </div>
-        </div>
+    <div style="margin-top: 30px; background: #1e293b; padding: 25px; border-radius: 12px; border-left: 8px solid var(--warning);">
+        <h3 style="margin-top:0; color:var(--warning);">⚡ 實戰操作核心解析</h3>
+        <p>1. <strong>市場物理上限：</strong> ES 6910 與 NQ 25184 是目前最強的 <strong>Call Wall</strong>。除非有重大數據支援，否則價格觸及此處極易引發做市商拋售，適合「左側短空」。</p>
+        <p>2. <strong>防禦臨界：</strong> ES 6857 與 NQ 24829 是目前的 <strong>Gamma Flip</strong>。只要位於此之上，回調均視為買入機會（正 Gamma 對沖會壓制波動）。</p>
     </div>
 </div>
 
