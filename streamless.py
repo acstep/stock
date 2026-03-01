@@ -236,7 +236,7 @@ def main():
         
         if html_content:
             st.divider()
-            st.markdown(html_content, unsafe_allow_html=True)
+            components.html(html_content, height=3000, scrolling=False)
         else:
             st.error("❌ 無法讀取 HTML 檔案")
     else:
