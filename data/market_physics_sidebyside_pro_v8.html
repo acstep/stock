@@ -2,101 +2,84 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>專業交易戰報 | ES & NQ 精確曝險分析</title>
+    <title>專業期貨曝險戰報 - 2026-03-01</title>
     <style>
         :root {
-            --bg: #0f172a; --card: #1e293b; --text: #f8fafc; --primary: #38bdf8;
-            --up: #10b981; --down: #ef4444; --flip: #f59e0b;
+            --bg: #0f172a; --card: #1e293b; --header: #1e293b; --text: #f8fafc;
+            --primary: #38bdf8; --up: #10b981; --down: #ef4444; --warning: #f59e0b;
         }
-        body { font-family: 'Inter', system-ui, sans-serif; background: var(--bg); color: var(--text); padding: 20px; line-height: 1.5; }
-        .container { max-width: 1000px; margin: auto; }
-        header { background: #1e293b; padding: 20px; border-radius: 12px; border-bottom: 4px solid var(--primary); margin-bottom: 25px; display: flex; justify-content: space-between; align-items: center; }
-        .basis-tag { background: #334155; padding: 5px 12px; border-radius: 6px; color: var(--primary); font-weight: bold; }
+        body { font-family: 'Inter', system-ui, sans-serif; background: var(--bg); color: var(--text); padding: 20px; }
+        .container { max-width: 1100px; margin: 0 auto; }
+        header { background: var(--header); padding: 25px; border-radius: 12px; border-bottom: 4px solid var(--primary); margin-bottom: 30px; }
+        .market-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; }
+        .card { background: var(--card); border-radius: 16px; padding: 25px; border: 1px solid #334155; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.3); }
+        h2 { color: var(--primary); margin-top: 0; border-bottom: 1px solid #334155; padding-bottom: 10px; }
         
-        .market-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-        @media (max-width: 800px) { .market-grid { grid-template-columns: 1fr; } }
-        
-        .card { background: var(--card); border-radius: 15px; padding: 20px; border: 1px solid #334155; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.3); }
-        .card h2 { margin-top: 0; color: var(--primary); border-bottom: 1px solid #334155; padding-bottom: 10px; font-size: 1.3rem; }
+        .gex-profile { background: #0a0f1e; padding: 15px; border-radius: 10px; margin: 20px 0; }
+        .chart-row { display: flex; align-items: center; margin-bottom: 3px; height: 16px; }
+        .row-label { width: 60px; font-size: 0.7rem; color: #94a3b8; text-align: right; margin-right: 10px; }
+        .bar-container { flex-grow: 1; height: 100%; position: relative; background: #1e293b44; }
+        .mid-line { position: absolute; left: 50%; top: -2px; bottom: -2px; border-left: 1px dashed #475569; z-index: 5; }
+        .bar { position: absolute; height: 100%; border-radius: 2px; }
 
-        /* GEX Profile Chart Styles */
-        .gex-profile { background: #0a0f1e; padding: 15px; border-radius: 10px; margin: 15px 0; }
-        .chart-row { display: flex; align-items: center; margin-bottom: 4px; height: 18px; }
-        .row-label { width: 50px; font-size: 0.75rem; color: #94a3b8; text-align: right; margin-right: 10px; }
-        .row-bar-container { flex-grow: 1; height: 12px; position: relative; background: #1e293b44; }
-        .center-line { position: absolute; left: 50%; top: -2px; bottom: -2px; border-left: 1px dashed #475569; z-index: 5; }
-        .row-bar { position: absolute; height: 100%; border-radius: 2px; }
-
-        table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 0.9rem; }
-        th { text-align: left; color: #94a3b8; padding: 8px; border-bottom: 2px solid #334155; }
-        td { padding: 10px 8px; border-bottom: 1px solid #1e293b; }
-        .badge { padding: 3px 6px; border-radius: 4px; font-size: 0.7rem; font-weight: bold; text-transform: uppercase; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th { text-align: left; color: #94a3b8; padding: 10px; border-bottom: 2px solid #334155; }
+        td { padding: 12px 10px; border-bottom: 1px solid #1e293b; font-weight: 500; }
+        .badge { padding: 4px 8px; border-radius: 6px; font-size: 0.75rem; font-weight: bold; }
         .bg-up { background: rgba(16, 185, 129, 0.2); color: var(--up); }
         .bg-down { background: rgba(239, 68, 68, 0.2); color: var(--down); }
-        .bg-flip { background: rgba(245, 158, 11, 0.2); color: var(--flip); }
+        .bg-flip { background: rgba(245, 158, 11, 0.2); color: var(--warning); }
+        
+        .strategy-box { margin-top: 30px; background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); padding: 25px; border-radius: 15px; border-left: 6px solid var(--warning); }
     </style>
 </head>
 <body>
-
 <div class="container">
     <header>
-        <div>
-            <h1 style="margin:0">美股期貨曝險戰報</h1>
-            <div style="color:#94a3b8; font-size:0.8rem">分析時間：2026-03-01 22:30 | 數據源：Real-time GEX Modelling</div>
-        </div>
-        <div class="basis-tag">ES +10.12 | NQ +44.71</div>
+        <h1 style="margin:0">📈 ES & NQ 深度曝險與交易導航</h1>
+        <p style="color:#94a3b8">基差校準: ES +10.12 | NQ +44.71 | 數據校準時間: 2026-03-01 22:30</p>
     </header>
 
     <div class="market-grid">
         <div class="card">
-            <h2>ES (S&P 500) 曝險剖面圖</h2>
+            <h2>ES (標普期貨) 曝險剖面</h2>
             <div class="gex-profile">
-                <div class="chart-row"><div class="row-label">6910</div><div class="row-bar-container"><div class="center-line"></div><div class="row-bar" style="left: 50%; width: 48%; background: var(--up);"></div></div></div>
-                <div class="chart-row"><div class="row-label">6900</div><div class="row-bar-container"><div class="center-line"></div><div class="row-bar" style="left: 50%; width: 15%; background: var(--up);"></div></div></div>
-                <div class="chart-row"><div class="row-label">6889</div><div class="row-bar-container"><div class="center-line" style="border-left: 2px solid var(--primary);"></div></div></div>
-                <div class="chart-row"><div class="row-label">6860</div><div class="row-bar-container"><div class="center-line"></div><div class="row-bar" style="right: 50%; width: 8%; background: var(--down);"></div></div></div>
-                <div class="chart-row"><div class="row-label">6810</div><div class="row-bar-container"><div class="center-line"></div><div class="row-bar" style="right: 50%; width: 45%; background: var(--down);"></div></div></div>
-            </div>
+                <div class="chart-row"><div class="row-label">6910</div><div class="bar-container"><div class="mid-line"></div><div class="bar" style="left: 50%; width: 50.0%; background: #10b981;"></div></div></div>
+                <div class="chart-row"><div class="row-label">6890</div><div class="bar-container"><div class="mid-line"></div><div class="bar" style="left: 50%; width: 12.4%; background: #10b981;"></div></div></div>
+                <div class="chart-row"><div class="row-label">6857</div><div class="bar-container"><div class="mid-line"></div><div class="bar" style="right: 50%; width: 2.1%; background: #ef4444;"></div></div></div>
+                <div class="chart-row"><div class="row-label">6810</div><div class="bar-container"><div class="mid-line"></div><div class="bar" style="right: 50%; width: 42.8%; background: #ef4444;"></div></div></div>
+                </div>
             <table>
-                <thead><tr><th>點位</th><th>性質</th><th>操作指引</th></tr></thead>
-                <tbody>
-                    <tr><td>6910.12</td><td><span class="badge bg-up">Call Wall</span></td><td style="color:var(--down)">最強壓力/短空點</td></tr>
-                    <tr><td>6857.62</td><td><span class="badge bg-flip">Gamma Flip</span></td><td style="color:var(--up)">多空分水支撐位</td></tr>
-                    <tr><td>6810.12</td><td><span class="badge bg-down">Put Wall</span></td><td>終極地板支撐</td></tr>
-                </tbody>
+                <tr><th>點位</th><th>性質</th><th>操作指引</th></tr>
+                <tr><td>6910.12</td><td><span class="badge bg-up">Call Wall</span></td><td style="color:var(--down)">最強壓力/短空點</td></tr>
+                <tr><td>6857.62</td><td><span class="badge bg-flip">Gamma Flip</span></td><td style="color:var(--up)">多空分界/回調買點</td></tr>
+                <tr><td>6810.12</td><td><span class="badge bg-down">Put Wall</span></td><td>終極地板支撐</td></tr>
             </table>
         </div>
 
         <div class="card">
-            <h2>NQ (Nasdaq 100) 曝險剖面圖</h2>
+            <h2>NQ (那指期貨) 曝險剖面</h2>
             <div class="gex-profile">
-                <div class="chart-row"><div class="row-label">25184</div><div class="row-bar-container"><div class="center-line"></div><div class="row-bar" style="left: 50%; width: 42%; background: var(--up);"></div></div></div>
-                <div class="chart-row"><div class="row-label">25100</div><div class="row-bar-container"><div class="center-line"></div><div class="row-bar" style="left: 50%; width: 12%; background: var(--up);"></div></div></div>
-                <div class="chart-row"><div class="row-label">25004</div><div class="row-bar-container"><div class="center-line" style="border-left: 2px solid var(--primary);"></div></div></div>
-                <div class="chart-row"><div class="row-label">24844</div><div class="row-bar-container"><div class="center-line"></div><div class="row-bar" style="right: 50%; width: 50%; background: var(--down);"></div></div></div>
-                <div class="chart-row"><div class="row-label">24829</div><div class="row-bar-container"><div class="center-line"></div><div class="row-bar" style="right: 50%; width: 5%; background: var(--down);"></div></div></div>
+                <div class="chart-row"><div class="row-label">25184</div><div class="bar-container"><div class="mid-line"></div><div class="bar" style="left: 50%; width: 50.0%; background: #10b981;"></div></div></div>
+                <div class="chart-row"><div class="row-label">25039</div><div class="bar-container"><div class="mid-line"></div><div class="bar" style="left: 50%; width: 8.5%; background: #10b981;"></div></div></div>
+                <div class="chart-row"><div class="row-label">24829</div><div class="row-label">...</div></div>
+                <div class="chart-row"><div class="row-label">24844</div><div class="bar-container"><div class="mid-line"></div><div class="bar" style="right: 50%; width: 45.2%; background: #ef4444;"></div></div></div>
             </div>
             <table>
-                <thead><tr><th>點位</th><th>性質</th><th>操作指引</th></tr></thead>
-                <tbody>
-                    <tr><td>25184.71</td><td><span class="badge bg-up">Call Wall</span></td><td style="color:var(--down)">絕對天花板/止盈</td></tr>
-                    <tr><td>25024.75</td><td><span class="badge bg-flip" style="background:var(--primary); color:white">Spot</span></td><td>現價密集爭奪區</td></tr>
-                    <tr><td>24829.71</td><td><span class="badge bg-flip">Gamma Flip</span></td><td style="color:var(--up)">回調接多生死線</td></tr>
-                </tbody>
+                <tr><th>點位</th><th>性質</th><th>操作指引</th></tr>
+                <tr><td>25184.71</td><td><span class="badge bg-up">Call Wall</span></td><td style="color:var(--down)">最強壓力/止盈空點</td></tr>
+                <tr><td>24829.71</td><td><span class="badge bg-flip">Gamma Flip</span></td><td style="color:var(--up)">多空分界/生死線</td></tr>
+                <tr><td>24844.71</td><td><span class="badge bg-down">Put Wall</span></td><td>強力支撐地板</td></tr>
             </table>
         </div>
     </div>
 
-    <div class="card" style="margin-top: 25px; border-left: 5px solid var(--flip);">
-        <h3 style="margin-top:0; color:var(--flip)">⚡ 實戰核心邏輯 (Market Physics)</h3>
-        <ul style="font-size: 0.95rem;">
-            <li><strong>正 Gamma 穩定區：</strong> 目前 ES 與 NQ 均在 <strong>Gamma Flip (分水嶺)</strong> 之上運行。這代表莊家（做市商）會採取「買低賣高」的對沖策略，盤面波動率相對受控，回踩關鍵支撐（如 ES 6857 / NQ 24829）具有較強承接。</li>
-            <li><strong>天花板效應：</strong> 當價格接近 <strong>Call Wall</strong> 時，做市商必須反向賣出期貨，這會形成強大的自動拋售壓力。建議在 <strong>ES 6910 / NQ 25184</strong> 附近減倉多單。</li>
-            <li><strong>風險臨界：</strong> 若價格有效跌破 <strong>Gamma Flip</strong> 點位，市場將進入負 Gamma 區，屆時下跌會加速，所有多單必須嚴格止損。</li>
-        </ul>
+    <div class="strategy-box">
+        <h3 style="margin-top:0; color:var(--warning)">⚡ 核心交易邏輯 (Market Physics)</h3>
+        <p>1. <b>正 Gamma 環境：</b> 目前現價高於 <b>Gamma Flip</b>，代表莊家處於穩定模式（買跌賣漲）。策略應以「逢低買入」為主，直到價格觸及天花板或跌破分水嶺。</p>
+        <p>2. <b>天花板效應：</b> 價格接近 <b>Call Wall</b> 時，莊家必須賣出期貨對沖，產生強大物理阻力。建議在 <b>ES 6910 / NQ 25184</b> 附近主動減倉。</p>
+        <p>3. <b>風險轉折：</b> 若 <b>NQ</b> 跌破 <b>24829</b>，市場轉向負 Gamma，波動會瞬間放大。此時多單須撤離並反手。</p>
     </div>
 </div>
-
 </body>
 </html>
