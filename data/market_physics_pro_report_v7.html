@@ -86,8 +86,6 @@
       background-color: #263238;
       color: #ffeb3b;
     }
-    .tag-es { background-color: #263238; color: #4fc3f7; }
-    .tag-nq { background-color: #263238; color: #ffab91; }
     .tag-long { background-color: #1b5e20; color: #c8e6c9; }
     .tag-short { background-color: #b71c1c; color: #ffcdd2; }
     .tag-neutral { background-color: #37474f; color: #eceff1; }
@@ -95,14 +93,32 @@
       font-size: 0.85em;
       color: #b0bec5;
     }
-    .highlight {
-      color: #ffcc80;
-      font-weight: 600;
-    }
     hr {
       border: 0;
       border-top: 1px solid #333;
       margin: 24px 0;
+    }
+    figure {
+      margin: 12px 0 16px 0;
+      text-align: center;
+    }
+    #canvas-wrap {
+      display: flex;
+      gap: 24px;
+      flex-wrap: wrap;
+      align-items: flex-start;
+      margin: 12px 0 4px 0;
+    }
+    canvas {
+      background-color: #050814;
+      border: 1px solid #333;
+      border-radius: 4px;
+    }
+    figcaption {
+      font-size: 0.9em;
+      color: #cfd8dc;
+      margin-top: 4px;
+      text-align: center;
     }
   </style>
 </head>
@@ -113,100 +129,48 @@
 <div class="section">
   <h2>0. 報告總覽</h2>
   <p>
-    本報告以 2026-02-27 收盤前的 SPX / NDX 期權 Gamma 與 Delta 檔為基礎，重建 ES / NQ 的 Gamma Force Field、關鍵價位矩陣與對應交易 Playbook。 [file:26][file:28][code_file:24]
+    本報告以 2026-02-27 收盤前的 SPX / NDX 期權 Gamma 與 Delta 檔為基礎，重建 ES / NQ 的 Gamma Force Field、關鍵價位矩陣與對應交易 Playbook。
   </p>
   <ul>
-    <li>原始 Gamma / Delta 來源：<code>SPX-20260227-0330-*.csv</code>、<code>NDX-20260227-0330-*.csv</code>。 [file:26][file:27][file:25][file:28]</li>
-    <li>透過固定基差換算為期貨價：ES 使用 <code>BASIS_ES = 10.12</code>，NQ 使用 <code>BASIS_NQ = 44.71</code>。 [code_file:24]</li>
-    <li>對每一個 Strike 計算 Net Gamma Exposure，並縮放為「億美元」及「百萬 USD」刻度，用於表格和 Force Field 圖。 [file:26][file:28][code_file:24]</li>
-    <li>辨識出 Spot（Call Δ≈0.5）、Gamma Flip、Call Wall（CW）、Put Wall（PW）及附近戰術節點，構成日內價格「坡度」與「泥沼區」。 [code_file:24][code_file:30][code_file:31]</li>
+    >原始 Gamma / Delta：de>SPX-20260227-0330-*.csv</code>、de>NDX-20260227-0330-*.csv</code>。</li>
+    >換算為期貨價：ES 使用 de>BASIS_ES = 10.12</code>，NQ 使用 de>BASIS_NQ = 44.71</code>。</li>
+    >每個 Strike 的 Net Gamma Exposure 轉為「億美元」與「百萬 USD」刻度，用於圖表與矩陣。</li>
   </ul>
 </div>
 
 <hr>
 
 <div class="section">
-  <h2>1. 數據與換算方法</h2>
+  <h2>1. ES / NQ Gamma Force Field（Canvas 版）</h2>
 
-  <h3>1.1 原始檔案與主要欄位</h3>
   <p>
-    SPX / NDX Gamma 檔提供每一個 Strike 的 Call/Put Gamma、Open Interest 與 Net Gamma Exposure 欄位，用來衡量做市商在該價位的名目 Gamma 部位。 [file:26][file:28]
-  </p>
-  <p>
-    Delta 檔提供對應 Strike 的 Call Delta，用來以「Call Δ 最接近 0.5 的點」反推期貨 Spot 位置。 [file:27][file:25]
+    下方兩個 Canvas 分別繪出 2026-02-27 收盤前，ES 與 NQ 在現價附近 ±120 / ±500 點區間的 Net Gamma Force Field。橫向條長度為 Gamma 名目曝險（約百萬 USD），綠色為正 Gamma、紅色為負 Gamma；水平線分別標示 Spot、Flip、Call Wall（CW）、Put Wall（PW）。
   </p>
 
-  <h3>1.2 指數 Strike → 期貨 ES / NQ 的換算</h3>
-  <p>
-    由於檔案中的 <code>Strike</code> 層級是指數（SPX / NDX），而你實際交易與圖像化關心的是 ES / NQ 期貨價，因此採用如下線性換算： [file:26][file:28][code_file:24]
-  </p>
-  <ul>
-    <li>ES：<code>ES_Futures = SPX_Strike + 10.12</code> （<code>BASIS_ES = 10.12</code>） [code_file:24]</li>
-    <li>NQ：<code>NQ_Futures = NDX_Strike + 44.71</code> （<code>BASIS_NQ = 44.71</code>） [code_file:24]</li>
-  </ul>
-  <p>
-    例如：SPX Strike 6900 點對應 ES 期貨約 6910.12 點；NDX Strike 24950 對應 NQ 約 24994.71 點。 [file:26][file:28][code_file:24]
-  </p>
-
-  <h3>1.3 Gamma 單位縮放</h3>
-  <p>
-    對原始 Net Gamma Exposure（以美元計）做兩段縮放，用於表格與圖表： [file:26][file:28][code_file:24]
-  </p>
-  <ul>
-    <li><code>GEX_Yi = NetGamma / 1e8</code>：單位為「億美元」，例如 GEX_Yi = 0.40 代表 0.40 億 USD Net Gamma。 [code_file:24][code_file:30]</li>
-    <li><code>GEX_M = GEX_Yi × 100</code>：便於繪圖，數值約等於「百萬 USD」級別的長度刻度。 [code_file:24]</li>
-  </ul>
-</div>
-
-<hr>
-
-<div class="section">
-  <h2>2. ES / NQ Force Field 概況（2/27 收盤前）</h2>
-
-  <h3>2.1 Force Field 視覺</h3>
-  <p>
-    下圖為 2026-02-27 收盤前的 ES（左）與 NQ（右） Gamma Force Field；橫軸為 Gamma 曝險（約百萬 USD），縱軸為對應 ES / NQ 期貨價。 [chart:29][code_file:24]
-  </p>
-  <!-- 圖片插入位置：ES / NQ Force Field 2026-02-27 (檔名：v6_risk_analysis_20260227_0330.png) -->
-
-  <p class="note">
-    註：綠色橫條代表正 Gamma（吸波，做市商傾向賣高買低），紅色橫條代表負 Gamma（放大波動，做市商傾向追高殺低）。黃線為 Spot，青線為 Gamma Flip，萊姆綠線為 Call Wall，洋紅線為 Put Wall。 [chart:29][code_file:24]
-  </p>
-
-  <div class="two-col">
-    <div class="col">
-      <h3>2.2 ES Force Field 形態</h3>
-      <p>
-        以程式估算，ES Spot 約落在 6910 一帶（Call Δ 約 0.5），Gamma Flip 約在 6900，Call Wall 與 Spot 幾乎重疊在 6910，Put Wall 則在 6860 左右。 [code_file:24][code_file:30]
-      </p>
-      <p>
-        現價貼在「CW + Spot」合體區，上方約 6910 以上是一小段正 Gamma 坡，下方經過 6900 Flip、6895 混合區再到 6860 PW 整體為緩坡結構，路徑上沒有深度負 Gamma 泥沼。 [code_file:30]
-      </p>
+  <div id="canvas-wrap">
+    <div>
+      anvas id="esCanvas" width="600" height="500"></canvas>
+      <figcaption>圖 1：ES Gamma Force Field（2/27 收盤前，現價 ±120 點）</figcaption>
     </div>
-    <div class="col">
-      <h3>2.3 NQ Force Field 形態</h3>
-      <p>
-        NQ Spot 約落在 24985 左右，Flip 約 24995，Call Wall 亦在 24995，Put Wall 約在 24895。 [code_file:24][code_file:31]
-      </p>
-      <p>
-        現價略低於 Flip，上方 24995–25020 為輕量正 Gamma 區，下方 24974–24969–24964 為一串小負 Gamma 通道，最終在 24895 PW 形成主要支撐，整體屬「上輕牆、下輕坡、底一個實質支撐」的形態。 [code_file:31]
-      </p>
+    <div>
+      anvas id="nqCanvas" width="600" height="500"></canvas>
+      <figcaption>圖 2：NQ Gamma Force Field（2/27 收盤前，現價 ±500 點）</figcaption>
     </div>
   </div>
+
+  <p class="note">
+    註：本 Canvas 使用與你 Python 程式相同的 de>process_gamma_physics_v6</code> 邏輯計算 Spot / Flip / CW / PW，並使用 de>GEX_M = NetGamma / 1e8 × 100</code> 作為橫向條長度。
+  </p>
 </div>
 
 <hr>
 
 <div class="section">
-  <h2>3. 關鍵價位矩陣（ES / NQ）</h2>
-
-  <p>
-    本節節錄 Force Field 中最具代表性的價位，包含性質（CW / PW / Flip / Spot 等）、單點 Gamma 壓力（億美元）、從現價到該價位的累積路徑曝險（億美元）。 [code_file:30][code_file:31]
-  </p>
+  <h2>2. 關鍵價位矩陣（ES / NQ）</h2>
 
   <div class="two-col">
     <div class="col">
-      <h3>3.1 ES 關鍵價位矩陣（節選）</h3>
+      <h3>2.1 ES 關鍵價位（節選）</h3>
       <table>
         <thead>
           <tr>
@@ -250,18 +214,15 @@
           <tr>
             <td>6860</td>
             <td class="label">🛡️ 最強支撐 (PW)</td>
-            <td>（約中等）</td>
-            <td>（約 2.xx）</td>
+            <td>≈中等</td>
+            <td>≈2.x</td>
           </tr>
         </tbody>
       </table>
-      <p class="note">
-        註：數值來自 <code>ES_matrix_20260227_0330.csv</code>，此處僅節錄頭幾行與 PW 周邊層級。 [code_file:30]
-      </p>
     </div>
 
     <div class="col">
-      <h3>3.2 NQ 關鍵價位矩陣（節選）</h3>
+      <h3>2.2 NQ 關鍵價位（節選）</h3>
       <table>
         <thead>
           <tr>
@@ -310,9 +271,6 @@
           </tr>
         </tbody>
       </table>
-      <p class="note">
-        註：數值來自 <code>NQ_matrix_20260227_0330.csv</code>，本表聚焦 CW / Spot / 通道與 PW 幾個關鍵價位。 [code_file:31]
-      </p>
     </div>
   </div>
 </div>
@@ -320,218 +278,244 @@
 <hr>
 
 <div class="section">
-  <h2>4. 交易 Playbook – ES 關鍵價位</h2>
+  <h2>3. 交易 Playbook – ES / NQ（簡表）</h2>
 
-  <p>
-    下表將 ES 主要 Force Field 節點轉寫為可直接操作的日內 Playbook，包括方向偏好、觸發情境、具體操作與止損建議。 [code_file:30]
-  </p>
+  <p>以下保留原本的操作邏輯摘要，方便你對照 Canvas 圖直接執行盤中決策。</p>
 
+  <h3>3.1 ES – 關鍵價位操作摘要</h3>
   <table>
     <thead>
       <tr>
-        <th>期貨價位</th>
+        <th>價位</th>
         <th class="label">性質</th>
-        <th class="label">方向偏好</th>
-        <th class="label">觸發情境</th>
-        <th class="label">具體操作</th>
-        <th class="label">止損 / 風險</th>
+        <th class="label">方向</th>
+        <th class="label">操作重點</th>
       </tr>
     </thead>
     <tbody>
       <tr>
         <td>6910</td>
-        <td class="label">👑 最強阻力 (CW)</td>
-        <td class="label"><span class="tag tag-short">偏空 / 減多</span></td>
-        <td class="text">
-          價格自下往上首次打到 6910，連續出現上影線、放量但無法站穩其上。 [code_file:30]
-        </td>
-        <td class="text">
-          持有多單者在 6905–6910 分批減倉 50–70%；有意做空者可在 6908–6912 小倉佈局短空。 [code_file:30]
-        </td>
-        <td class="text">
-          初始止損設在 6925 上方；若快速回落至 6900，可將止損下移至 6915 鎖利。 [code_file:30]
-        </td>
-      </tr>
-      <tr>
-        <td>6905</td>
-        <td class="label">流動性節點</td>
-        <td class="label"><span class="tag tag-neutral">部位管理</span></td>
-        <td class="text">
-          從 6910 被打回後在 6905 一帶橫盤，買盤無法再推回 CW。 [code_file:30]
-        </td>
-        <td class="text">
-          空單可將原本較寬的止損（如 6925）收緊到 6915；多頭暫不追價，主要觀察。 [code_file:30]
-        </td>
-        <td class="text">
-          若重新站回 6910 之上，視為 CW 突破企圖，需回復原本較寬止損或離場。 [code_file:30]
-        </td>
+        <td class="label">👑 CW</td>
+        <td class="label"><span class="tag tag-short">減多 / 佈空</span></td>
+        <td class="text">首次打到 6910 且出現上影線＋放量：多單分批減碼，6908–6912 小倉佈空，止損 6925。</td>
       </tr>
       <tr>
         <td>6900</td>
-        <td class="label">🚨 分水嶺 (Flip)</td>
+        <td class="label">🚨 Flip</td>
         <td class="label"><span class="tag tag-neutral">觀望 / 小倉</span></td>
-        <td class="text">
-          價格在 6895–6905 來回拉鋸，成交量縮，方向不明。 [code_file:30]
-        </td>
-        <td class="text">
-          重倉避免在此對賭；若要操作，可在 6895–6900 試小多或在 6900–6905 試小空，皆搭配緊密止損。 [code_file:30]
-        </td>
-        <td class="text">
-          多單止損建議設在 6885–6888；空單止損回設於 6910 上方，此處主要當作 regime 線使用。 [code_file:30]
-        </td>
+        <td class="text">易被雙向洗；僅可小倉試單，多單止損 6885–6888，空單止損 6910。</td>
       </tr>
       <tr>
         <td>6895</td>
-        <td class="label">流動性節點（輕負 Gamma）</td>
-        <td class="label"><span class="tag tag-short">偏空（追空點）</span></td>
-        <td class="text">
-          從 6910/6905 一路放量殺到 6895，Flip 已被有效跌破。 [code_file:30]
-        </td>
-        <td class="text">
-          可在 6895–6890 之間小倉追空，配合先前高位空單形成一組波段部位。 [code_file:30]
-        </td>
-        <td class="text">
-          統一止損放回 6905–6910 上方，以防 Flip 假跌破後快速收復。 [code_file:30]
-        </td>
+        <td class="label">負 Gamma 節點</td>
+        <td class="label"><span class="tag tag-short">追空</span></td>
+        <td class="text">從 6910 一路放量殺下來後，6895–6890 可追空，止損 6905–6910。</td>
       </tr>
       <tr>
         <td>6890</td>
-        <td class="label">流動性節點（回到正 Gamma）</td>
-        <td class="label"><span class="tag tag-long">偏多 / 減空</span></td>
-        <td class="text">
-          價格在 6890 一帶出現下影線與買盤承接，跌勢開始鈍化。 [code_file:30]
-        </td>
-        <td class="text">
-          空單在此先回補 30–50%；激進多頭可在 6888–6892 試小多，目標看回 6900–6910。 [code_file:30]
-        </td>
-        <td class="text">
-          多單止損建議設在 6880，一旦跌破則視為要測試 6860 PW。 [code_file:30]
-        </td>
+        <td class="label">正 Gamma 節點</td>
+        <td class="label"><span class="tag tag-long">減空 / 試多</span></td>
+        <td class="text">空單先回補 30–50%，6888–6892 可輕倉試多，止損 6880。</td>
       </tr>
       <tr>
         <td>6860</td>
-        <td class="label">🛡️ 最強支撐 (PW)</td>
-        <td class="label"><span class="tag tag-long">偏多 / 大幅減空</span></td>
-        <td class="text">
-          價格自上而下首次測試 6860–6850 區間，成交放量並出現明顯長下影線。 [code_file:30]
-        </td>
-        <td class="text">
-          空單在此優先大幅平倉；多頭可於 6850–6860 分批接多，初期槓桿保守。 [code_file:30]
-        </td>
-        <td class="text">
-          多單初始止損設在 6835–6840，若 6860 被多次確認守住，止損可上移至 6850 以下。 [code_file:30]
-        </td>
+        <td class="label">🛡️ PW</td>
+        <td class="label"><span class="tag tag-long">偏多</span></td>
+        <td class="text">首次測試 6860–6850：空單大幅減倉，6850–6860 分批接多，止損 6835–6840。</td>
       </tr>
     </tbody>
   </table>
-</div>
 
-<hr>
-
-<div class="section">
-  <h2>5. 交易 Playbook – NQ 關鍵價位</h2>
-
-  <p>
-    NQ 部分結構較輕，Gamma 金額普遍較小，但 Force Field 仍提供明確的路徑與轉折參考。 [code_file:31]
-  </p>
-
+  <h3>3.2 NQ – 關鍵價位操作摘要</h3>
   <table>
     <thead>
       <tr>
-        <th>期貨價位</th>
+        <th>價位</th>
         <th class="label">性質</th>
-        <th class="label">方向偏好</th>
-        <th class="label">觸發情境</th>
-        <th class="label">具體操作</th>
-        <th class="label">止損 / 風險</th>
+        <th class="label">方向</th>
+        <th class="label">操作重點</th>
       </tr>
     </thead>
     <tbody>
       <tr>
         <td>24994</td>
-        <td class="label">👑 最強阻力 (CW)</td>
-        <td class="label"><span class="tag tag-short">偏空 / 減多</span></td>
-        <td class="text">
-          價格由下彈升至 24990–25000，出現假突破型態（上影線、放量但無法站穩 25000 之上）。 [code_file:31]
-        </td>
-        <td class="text">
-          持有多單者於 24990–25000 先行減倉；有意佈空者可在 24990–25010 試空。 [code_file:31]
-        </td>
-        <td class="text">
-          止損放於 25040 上方，確認站穩 25050 以上則視為結構向上轉強。 [code_file:31]
-        </td>
+        <td class="label">👑 CW</td>
+        <td class="label"><span class="tag tag-short">減多 / 佈空</span></td>
+        <td class="text">24990–25000 出現假突破：多單減碼，24990–25010 試空，止損 25040。</td>
       </tr>
       <tr>
         <td>24984</td>
-        <td class="label">🎯 現價區域 (Spot)</td>
+        <td class="label">🎯 Spot</td>
         <td class="label"><span class="tag tag-neutral">觀望</span></td>
-        <td class="text">
-          價格在 24980–24990 窄幅橫盤，Gamma 輕微負值，一離開現價易順勢延伸。 [code_file:31]
-        </td>
-        <td class="text">
-          不建議重倉雙向對賭；可等待向上測試 24994 失敗或向下跌破 24974 後再進場。 [code_file:31]
-        </td>
-        <td class="text">
-          若強行操作，部位需極小，並將止損設在 ±20–30 點處以控制風險。 [code_file:31]
-        </td>
+        <td class="text">不重倉對賭；待上測 24994 失敗或下破 24974、24969 再行動。</td>
       </tr>
       <tr>
         <td>24974–24969</td>
         <td class="label">負 Gamma 通道</td>
-        <td class="label"><span class="tag tag-short">偏空（追空帶）</span></td>
-        <td class="text">
-          價格自 24994 / 24984 一路跌破至 24974–24969，成交持續偏賣，GEX 小負且累積路徑轉負。 [code_file:31]
-        </td>
-        <td class="text">
-          空頭可在 24980、24970 分批加空，形成一組順勢通道交易，目標看 24920–24894 一帶。 [code_file:31]
-        </td>
-        <td class="text">
-          統一止損設在 25000 上方，若價格重新站回整數大關之上，視為通道失效。 [code_file:31]
-        </td>
-      </tr>
-      <tr>
-        <td>24964</td>
-        <td class="label">通道尾端節點</td>
-        <td class="label"><span class="tag tag-neutral">空單管理</span></td>
-        <td class="text">
-          價格滑落至 24960 一帶，波動放緩，出現止跌跡象（縮量、下影線）。 [code_file:31]
-        </td>
-        <td class="text">
-          空頭在此可先回補 30–50%，保留部分部位觀察是否延伸至 24920–24894。 [code_file:31]
-        </td>
-        <td class="text">
-          若此處強烈反彈並重回 24980 以上，剩餘空單止損應拉至 25000 上方。 [code_file:31]
-        </td>
+        <td class="label"><span class="tag tag-short">追空</span></td>
+        <td class="text">24980、24970 分批加空，目標 24920–24894，統一止損 25000 上方。</td>
       </tr>
       <tr>
         <td>24894</td>
-        <td class="label">🛡️ 最強支撐 (PW)</td>
-        <td class="label"><span class="tag tag-long">偏多 / 大幅減空</span></td>
-        <td class="text">
-          價格首次觸及 24890–24900，成交放量，出現長下影線。 [code_file:31]
-        </td>
-        <td class="text">
-          空頭在此處優先大幅平倉；多頭可於此區分批試多，預期會有較像樣的反彈。 [code_file:31]
-        </td>
-        <td class="text">
-          多單初始止損設於 24850–24860，若被明顯跌穿且回抽不回 24900，視為 PW 支撐失效。 [code_file:31]
-        </td>
+        <td class="label">🛡️ PW</td>
+        <td class="label"><span class="tag tag-long">偏多 / 減空</span></td>
+        <td class="text">首次測 24890–24900：空單大幅平倉，24890–24900 試多，止損 24850–24860。</td>
       </tr>
     </tbody>
   </table>
 </div>
 
-<hr>
+<script>
+  // 由 Python 計算出的 2/27 ES/NQ 視窗 GEX_M + Futures 數據
+  const esData = {
+    spot: 6910.12,
+    flip: 6900.12,
+    cw: 6910.12,
+    pw: 6860.12,
+    futs: [6815.12,6820.12,6825.12,6830.12,6835.12,6840.12,6845.12,6850.12,6855.12,6860.12,6865.12,6870.12,6875.12,6880.12,6885.12,6890.12,6895.12,6900.12,6905.12,6910.12],
+    gexm:[-11.66,-19.27,-22.5,-36.62,-40.79,-58.51,-47.54,-63.22,-52.62,-75.76,-44.34,-60.17,-45.34,-11.98,-23.85,13.65,-7.62,3.01,21.95,40.24]
+  };
 
-<div class="section">
-  <h2>6. 結語與延伸</h2>
-  <p>
-    2026-02-27 收盤前的截面顯示，ES 偏向「高位正 Gamma 箱型，上有 CW 壓制、下有 PW 緩坡支撐」，而 NQ 則是「上緣輕 CW + Flip 疊加，下方小負 Gamma 通道連接至實質 Put Wall」。 [code_file:30][code_file:31]
-  </p>
-  <p>
-    這份 HTML 報告的結構已經固定，你只要每日更新 SPX / NDX Gamma + Delta 檔，沿用同一流程產出 ES / NQ Force Field、矩陣與 Playbook，就能快速得到一致格式的日內 Gamma 作戰手冊。 [file:26][file:28][code_file:24]
-  </p>
-</div>
+  const nqData = {
+    spot: 24984.71,
+    flip: 24994.71,
+    cw: 24994.71,
+    pw: 24894.71,
+    futs: [24834.71,24844.71,24854.71,24864.71,24869.71,24874.71,24884.71,24894.71,24904.71,24914.71,24919.71,24924.71,24934.71,24944.71,24954.71,24964.71,24969.71,24974.71,24984.71,24994.71],
+    gexm:[0.12,-3.22,-0.53,-0.33,-0.78,-1.21,-1.42,-4.02,0.04,-1.13,-0.62,-0.87,-0.08,-2.4,-0.99,-0.37,-0.83,-0.5,-1.44,0.53]
+  };
+
+  function drawForceField(canvas, data, symbol) {
+    const ctx = canvas.getContext('2d');
+    const W = canvas.width;
+    const H = canvas.height;
+
+    ctx.clearRect(0, 0, W, H);
+
+    const futs = data.futs;
+    const gex = data.gexm;
+
+    const minF = Math.min(...futs);
+    const maxF = Math.max(...futs);
+    const minG = Math.min(...gex);
+    const maxG = Math.max(...gex);
+
+    const marginL = 60;
+    const marginR = 20;
+    const marginT = 20;
+    const marginB = 30;
+    const plotW = W - marginL - marginR;
+    const plotH = H - marginT - marginB;
+
+    function yScale(f) {
+      return marginT + plotH - ( (f - minF) / (maxF - minF) ) * plotH;
+    }
+    const maxAbsG = Math.max(Math.abs(minG), Math.abs(maxG)) || 1;
+    function xScale(g) {
+      return (g / maxAbsG) * (plotW * 0.45);
+    }
+
+    // 背景與座標軸
+    ctx.fillStyle = '#050814';
+    ctx.fillRect(marginL, marginT, plotW, plotH);
+
+    ctx.strokeStyle = '#444';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(marginL, marginT);
+    ctx.lineTo(marginL, marginT + plotH);
+    ctx.lineTo(marginL + plotW, marginT + plotH);
+    ctx.stroke();
+
+    // 中心垂直線（Gamma ~ 0）
+    ctx.strokeStyle = '#2c3e50';
+    ctx.setLineDash([4, 4]);
+    ctx.beginPath();
+    const xZero = marginL + plotW * 0.5;
+    ctx.moveTo(xZero, marginT);
+    ctx.lineTo(xZero, marginT + plotH);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // 畫 bar
+    const n = futs.length;
+    const barH = plotH / n * 0.7;
+
+    for (let i = 0; i < n; i++) {
+      const f = futs[i];
+      const g = gex[i];
+      const y = yScale(f) - barH / 2;
+      const w = xScale(g);
+
+      ctx.fillStyle = g >= 0 ? '#00FF66' : '#FF3333';
+
+      if (g >= 0) {
+        ctx.fillRect(xZero, y, Math.max(1, w), barH);
+      } else {
+        ctx.fillRect(xZero + w, y, Math.max(1, -w), barH);
+      }
+    }
+
+    // 劃 Spot / Flip / CW / PW 水平線
+    function drawLine(price, color, style, label) {
+      const y = yScale(price);
+      ctx.strokeStyle = color;
+      ctx.lineWidth = 1.2;
+      if (style === 'dash') {
+        ctx.setLineDash([6, 4]);
+      } else if (style === 'dot') {
+        ctx.setLineDash([2, 4]);
+      } else {
+        ctx.setLineDash([]);
+      }
+      ctx.beginPath();
+      ctx.moveTo(marginL, y);
+      ctx.lineTo(marginL + plotW, y);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      // label
+      ctx.fillStyle = color;
+      ctx.font = '11px sans-serif';
+      ctx.fillText(label + ' ' + price.toFixed(0), marginL + 4, y - 3);
+    }
+
+    drawLine(data.spot, 'yellow', 'solid', 'Spot');
+    drawLine(data.flip, '#00bcd4', 'dash', 'Flip');
+    drawLine(data.cw, '#8bc34a', 'solid', 'CW');
+    drawLine(data.pw, '#e91e63', 'dot', 'PW');
+
+    // Y 軸刻度
+    ctx.fillStyle = '#b0bec5';
+    ctx.font = '10px sans-serif';
+    const ticks = 5;
+    for (let i = 0; i <= ticks; i++) {
+      const t = minF + (maxF - minF) * (i / ticks);
+      const y = yScale(t);
+      ctx.fillText(t.toFixed(0), 5, y + 3);
+      ctx.strokeStyle = '#222';
+      ctx.lineWidth = 0.5;
+      ctx.beginPath();
+      ctx.moveTo(marginL, y);
+      ctx.lineTo(marginL + plotW, y);
+      ctx.stroke();
+    }
+
+    // 標題
+    ctx.fillStyle = '#ffffff';
+    ctx.font = '13px sans-serif';
+    ctx.fillText(symbol + ' Gamma Force Field (2026-02-27)', marginL, 14);
+    ctx.font = '11px sans-serif';
+    ctx.fillText('Bar = Net Gamma Exposure (approx. 百萬 USD)', marginL, H - 5);
+  }
+
+  window.addEventListener('load', function() {
+    const esCanvas = document.getElementById('esCanvas');
+    const nqCanvas = document.getElementById('nqCanvas');
+    drawForceField(esCanvas, esData, 'ES');
+    drawForceField(nqCanvas, nqData, 'NQ');
+  });
+</script>
 
 </body>
 </html>
