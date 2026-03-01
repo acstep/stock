@@ -204,6 +204,13 @@ def main():
             es_data = get_futures_data("ES=F", period="3mo")
             if es_data is not None:
                 es_data = calculate_bollinger_bands(es_data)
+                
+                # Display latest Bollinger Bands values
+                latest = es_data.iloc[-1]
+                st.info(f"**最後一天 ({latest.name.strftime('%Y-%m-%d')})**\n\n"
+                       f"📈 布林上軌：**{latest['Upper']:.2f}**\n\n"
+                       f"📉 布林下軌：**{latest['Lower']:.2f}**")
+                
                 fig_es = create_candlestick_chart(es_data, "ES 日K線圖 + 布林通道")
                 st.plotly_chart(fig_es, use_container_width=True)
     
@@ -213,6 +220,13 @@ def main():
             nq_data = get_futures_data("NQ=F", period="3mo")
             if nq_data is not None:
                 nq_data = calculate_bollinger_bands(nq_data)
+                
+                # Display latest Bollinger Bands values
+                latest = nq_data.iloc[-1]
+                st.info(f"**最後一天 ({latest.name.strftime('%Y-%m-%d')})**\n\n"
+                       f"📈 布林上軌：**{latest['Upper']:.2f}**\n\n"
+                       f"📉 布林下軌：**{latest['Lower']:.2f}**")
+                
                 fig_nq = create_candlestick_chart(nq_data, "NQ 日K線圖 + 布林通道")
                 st.plotly_chart(fig_nq, use_container_width=True)
 
