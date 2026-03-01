@@ -239,18 +239,32 @@ def main():
     with col3:
         st.markdown("### ES 一分鐘線圖")
         with st.spinner("正在獲取 ES 一分鐘數據..."):
-            es_1m_data = get_futures_data("ES=F", period="1d", interval="1m")
-            if es_1m_data is not None:
-                fig_es_1m = create_candlestick_chart(es_1m_data, "ES 一分鐘K線圖")
-                st.plotly_chart(fig_es_1m, use_container_width=True)
+            # Try to get data for last 5 days to ensure we get the latest trading day
+            es_1m_data = get_futures_data("ES=F", period="5d", interval="1m")
+            if es_1m_data is not None and not es_1m_data.empty:
+                # Get the latest trading day
+                latest_date = es_1m_data.index[-1].date()
+                es_1m_today = es_1m_data[es_1m_data.index.date == latest_date]
+                
+                if not es_1m_today.empty:
+                    st.caption(f"數據日期：{latest_date}")
+                    fig_es_1m = create_candlestick_chart(es_1m_today, "ES 一分鐘K線圖")
+                    st.plotly_chart(fig_es_1m, use_container_width=True)
     
     with col4:
         st.markdown("### NQ 一分鐘線圖")
         with st.spinner("正在獲取 NQ 一分鐘數據..."):
-            nq_1m_data = get_futures_data("NQ=F", period="1d", interval="1m")
-            if nq_1m_data is not None:
-                fig_nq_1m = create_candlestick_chart(nq_1m_data, "NQ 一分鐘K線圖")
-                st.plotly_chart(fig_nq_1m, use_container_width=True)
+            # Try to get data for last 5 days to ensure we get the latest trading day
+            nq_1m_data = get_futures_data("NQ=F", period="5d", interval="1m")
+            if nq_1m_data is not None and not nq_1m_data.empty:
+                # Get the latest trading day
+                latest_date = nq_1m_data.index[-1].date()
+                nq_1m_today = nq_1m_data[nq_1m_data.index.date == latest_date]
+                
+                if not nq_1m_today.empty:
+                    st.caption(f"數據日期：{latest_date}")
+                    fig_nq_1m = create_candlestick_chart(nq_1m_today, "NQ 一分鐘K線圖")
+                    st.plotly_chart(fig_nq_1m, use_container_width=True)
 
 
 if __name__ == "__main__":
