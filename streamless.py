@@ -61,6 +61,35 @@ def get_latest_html_in_data() -> str | None:
         return None
 
 
+def get_html_files_list() -> list[Path]:
+    """Get list of all HTML files in data subdirectory."""
+    try:
+        current_dir = Path(__file__).parent
+        data_dir = current_dir / "data"
+        
+        if not data_dir.exists():
+            return []
+        
+        # Find all HTML files and sort by modification time (newest first)
+        html_files = list(data_dir.glob("*.html"))
+        html_files.sort(key=lambda p: p.stat().st_mtime, reverse=True)
+        
+        return html_files
+    except Exception as e:
+        st.error(f"獲取 HTML 檔案列表時發生錯誤：{e}")
+        return []
+
+
+def read_html_file(file_path: Path) -> str | None:
+    """Read HTML content from a file path."""
+    try:
+        with open(file_path, "r", encoding="utf-8") as f:
+            return f.read()
+    except Exception as e:
+        st.error(f"讀取檔案時發生錯誤：{e}")
+        return None
+
+
 # ---------------------------------------------------------------------------
 # Yahoo Finance helpers
 # ---------------------------------------------------------------------------
@@ -185,13 +214,33 @@ def main():
         layout="wide",
     )
     
-    # Directly read and display latest HTML from data subdirectory
-    html_content = get_latest_html_in_data()
+    # Get list of HTML files
+    html_files = get_html_files_list()
     
-    if html_content:
-        components.html(html_content, height=800, scrolling=True)
+    html_content = None
+    
+    if html_files:
+        # Create selectbox for HTML file selection
+        st.subheader("📁 選擇 HTML 報告")
+        file_options = [f.name for f in html_files]
+        selected_file = st.selectbox(
+            "選擇要顯示的報告",
+            options=file_options,
+            index=0,
+            help="按修改時間排序，最新的在最前面"
+        )
+        
+        # Read selected file
+        selected_path = next(f for f in html_files if f.name == selected_file)
+        html_content = read_html_file(selected_path)
+        
+        if html_content:
+            st.divider()
+            components.html(html_content, height=800, scrolling=True)
+        else:
+            st.error("❌ 無法讀取 HTML 檔案")
     else:
-        st.error("❌ 無法讀取 HTML 檔案")
+        st.error("❌ data 目錄中找不到 HTML 檔案")
     
     # Display ES and NQ charts with Bollinger Bands
     st.divider()
