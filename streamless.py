@@ -1,7 +1,7 @@
 """
 streamless-html.py – HTML Viewer
 Streamlit app that reads index.html from local directory or GitHub
-and displays it in the browser.
+and displays it in the browser, with ES/NQ candlestick charts.
 """
 
 import os
@@ -10,6 +10,10 @@ import streamlit.components.v1 as components
 from pathlib import Path
 import urllib.request
 import urllib.error
+import yfinance as yf
+import pandas as pd
+import plotly.graph_objects as go
+from datetime import datetime, timedelta
 
 # ---------------------------------------------------------------------------
 # HTML loading helpers
@@ -57,6 +61,97 @@ def get_latest_html_in_data() -> str | None:
         return None
 
 
+# ---------------------------------------------------------------------------
+# Yahoo Finance helpers
+# ---------------------------------------------------------------------------
+
+def get_futures_data(symbol: str, period: str = "3mo") -> pd.DataFrame | None:
+    """Fetch futures data from Yahoo Finance."""
+    try:
+        ticker = yf.Ticker(symbol)
+        df = ticker.history(period=period)
+        if df.empty:
+            st.warning(f"⚠️ 無法獲取 {symbol} 數據")
+            return None
+        return df
+    except Exception as e:
+        st.error(f"獲取 {symbol} 數據時發生錯誤：{e}")
+        return None
+
+
+def calculate_bollinger_bands(df: pd.DataFrame, window: int = 20, num_std: float = 2.0) -> pd.DataFrame:
+    """Calculate Bollinger Bands."""
+    df = df.copy()
+    df['SMA'] = df['Close'].rolling(window=window).mean()
+    df['STD'] = df['Close'].rolling(window=window).std()
+    df['Upper'] = df['SMA'] + (df['STD'] * num_std)
+    df['Lower'] = df['SMA'] - (df['STD'] * num_std)
+    return df
+
+
+def create_candlestick_chart(df: pd.DataFrame, title: str) -> go.Figure:
+    """Create a candlestick chart with Bollinger Bands."""
+    fig = go.Figure()
+    
+    # Candlestick
+    fig.add_trace(go.Candlestick(
+        x=df.index,
+        open=df['Open'],
+        high=df['High'],
+        low=df['Low'],
+        close=df['Close'],
+        name='K線',
+        increasing_line_color='red',
+        decreasing_line_color='green'
+    ))
+    
+    # Bollinger Bands
+    fig.add_trace(go.Scatter(
+        x=df.index,
+        y=df['Upper'],
+        name='上軌',
+        line=dict(color='rgba(250, 128, 114, 0.5)', width=1),
+        mode='lines'
+    ))
+    
+    fig.add_trace(go.Scatter(
+        x=df.index,
+        y=df['SMA'],
+        name='中軌 (SMA20)',
+        line=dict(color='orange', width=1.5),
+        mode='lines'
+    ))
+    
+    fig.add_trace(go.Scatter(
+        x=df.index,
+        y=df['Lower'],
+        name='下軌',
+        line=dict(color='rgba(173, 216, 230, 0.5)', width=1),
+        mode='lines',
+        fill='tonexty',
+        fillcolor='rgba(173, 216, 230, 0.1)'
+    ))
+    
+    fig.update_layout(
+        title=title,
+        yaxis_title='價格',
+        xaxis_title='日期',
+        height=500,
+        template='plotly_white',
+        xaxis_rangeslider_visible=False,
+        hovermode='x unified',
+        legend=dict(
+            orientation="h",
+            yanchor="bottom",
+            y=1.02,
+            xanchor="right",
+            x=1
+        )
+    )
+    
+    return fig
+
+
 def read_github_html(url: str) -> str | None:
     """Read HTML content from a GitHub raw URL."""
     try:
@@ -96,6 +191,30 @@ def main():
         components.html(html_content, height=800, scrolling=True)
     else:
         st.error("❌ 無法讀取 HTML 檔案")
+    
+    # Display ES and NQ charts with Bollinger Bands
+    st.divider()
+    st.subheader("📈 ES & NQ 日K線圖 (含布林帶指標)")
+    
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        st.markdown("### ES (E-mini S&P 500)")
+        with st.spinner("正在獲取 ES 數據..."):
+            es_data = get_futures_data("ES=F", period="3mo")
+            if es_data is not None:
+                es_data = calculate_bollinger_bands(es_data)
+                fig_es = create_candlestick_chart(es_data, "ES 日K線圖 + 布林通道")
+                st.plotly_chart(fig_es, use_container_width=True)
+    
+    with col2:
+        st.markdown("### NQ (E-mini Nasdaq-100)")
+        with st.spinner("正在獲取 NQ 數據..."):
+            nq_data = get_futures_data("NQ=F", period="3mo")
+            if nq_data is not None:
+                nq_data = calculate_bollinger_bands(nq_data)
+                fig_nq = create_candlestick_chart(nq_data, "NQ 日K線圖 + 布林通道")
+                st.plotly_chart(fig_nq, use_container_width=True)
 
 
 if __name__ == "__main__":
