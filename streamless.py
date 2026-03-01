@@ -257,20 +257,11 @@ def main():
         if html_content:
             st.divider()
             
-            # 在HTML末尾追加K線圖的容器
+            # 在HTML末尾追加K線圖
             charts_html = """
             <hr>
             <h2 style='text-align:center; margin-top:40px;'>📈 ES & NQ 日K線圖 (含布林帶指標)</h2>
             <div style='display: flex; gap: 20px; margin: 20px;'>
-                <div id='es-daily-chart' style='flex: 1;'></div>
-                <div id='nq-daily-chart' style='flex: 1;'></div>
-            </div>
-            <hr>
-            <h2 style='text-align:center; margin-top:40px;'>📊 ES & NQ 一分鐘線圖</h2>
-            <div style='display: flex; gap: 20px; margin: 20px;'>
-                <div id='es-1m-chart' style='flex: 1;'></div>
-                <div id='nq-1m-chart' style='flex: 1;'></div>
-            </div>
             """
             
             # 獲取並生成ES日K線圖
@@ -280,15 +271,14 @@ def main():
                     es_data = calculate_bollinger_bands(es_data)
                     latest = es_data.iloc[-1]
                     charts_html += f"""
-                    <div style='margin: 20px;'>
+                    <div style='flex: 1;'>
                         <h3>ES (E-mini S&P 500)</h3>
                         <p><strong>最後一天 ({latest.name.strftime('%Y-%m-%d')})</strong></p>
-                        <p>📈 布林上軌：<strong>{latest['Upper']:.2f}</strong></p>
-                        <p>📉 布林下軌：<strong>{latest['Lower']:.2f}</strong></p>
-                    </div>
+                        <p>📈 布林上軌：<strong>{latest['Upper']:.2f}</strong> | 📉 布林下軌：<strong>{latest['Lower']:.2f}</strong></p>
                     """
                     fig_es = create_candlestick_chart(es_data, "ES 日K線圖 + 布林通道")
                     charts_html += fig_es.to_html(include_plotlyjs='cdn', div_id='es-daily-chart', full_html=False)
+                    charts_html += "</div>"
             
             # 獲取並生成NQ日K線圖
             with st.spinner("正在獲取 NQ 數據..."):
@@ -297,15 +287,21 @@ def main():
                     nq_data = calculate_bollinger_bands(nq_data)
                     latest = nq_data.iloc[-1]
                     charts_html += f"""
-                    <div style='margin: 20px;'>
+                    <div style='flex: 1;'>
                         <h3>NQ (E-mini Nasdaq-100)</h3>
                         <p><strong>最後一天 ({latest.name.strftime('%Y-%m-%d')})</strong></p>
-                        <p>📈 布林上軌：<strong>{latest['Upper']:.2f}</strong></p>
-                        <p>📉 布林下軌：<strong>{latest['Lower']:.2f}</strong></p>
-                    </div>
+                        <p>📈 布林上軌：<strong>{latest['Upper']:.2f}</strong> | 📉 布林下軌：<strong>{latest['Lower']:.2f}</strong></p>
                     """
                     fig_nq = create_candlestick_chart(nq_data, "NQ 日K線圖 + 布林通道")
                     charts_html += fig_nq.to_html(include_plotlyjs=False, div_id='nq-daily-chart', full_html=False)
+                    charts_html += "</div>"
+            
+            charts_html += """
+            </div>
+            <hr>
+            <h2 style='text-align:center; margin-top:40px;'>📊 ES & NQ 一分鐘線圖</h2>
+            <div style='display: flex; gap: 20px; margin: 20px;'>
+            """
             
             # 獲取並生成ES 1分鐘線圖
             with st.spinner("正在獲取 ES 一分鐘數據..."):
@@ -315,13 +311,13 @@ def main():
                     es_1m_today = es_1m_data[es_1m_data.index.date == latest_date]
                     if not es_1m_today.empty:
                         charts_html += f"""
-                        <div style='margin: 20px;'>
+                        <div style='flex: 1;'>
                             <h3>ES 一分鐘線圖</h3>
                             <p>數據日期：{latest_date}</p>
-                        </div>
                         """
                         fig_es_1m = create_candlestick_chart(es_1m_today, "ES 一分鐘K線圖", show_bollinger=False)
                         charts_html += fig_es_1m.to_html(include_plotlyjs=False, div_id='es-1m-chart', full_html=False)
+                        charts_html += "</div>"
             
             # 獲取並生成NQ 1分鐘線圖
             with st.spinner("正在獲取 NQ 一分鐘數據..."):
@@ -331,13 +327,15 @@ def main():
                     nq_1m_today = nq_1m_data[nq_1m_data.index.date == latest_date]
                     if not nq_1m_today.empty:
                         charts_html += f"""
-                        <div style='margin: 20px;'>
+                        <div style='flex: 1;'>
                             <h3>NQ 一分鐘線圖</h3>
                             <p>數據日期：{latest_date}</p>
-                        </div>
                         """
                         fig_nq_1m = create_candlestick_chart(nq_1m_today, "NQ 一分鐘K線圖", show_bollinger=False)
                         charts_html += fig_nq_1m.to_html(include_plotlyjs=False, div_id='nq-1m-chart', full_html=False)
+                        charts_html += "</div>"
+            
+            charts_html += "</div>"
             
             # 合併HTML內容
             combined_html = html_content + charts_html
