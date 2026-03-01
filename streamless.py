@@ -1,7 +1,7 @@
 """
 streamless.py – Barchart AI Report Generator
 Streamlit app that fetches the 4 latest CSVs from Google Drive,
-converts them to Markdown, calls Gemini 2.0 Flash, renders the
+converts them to Markdown, calls Gemma 3 27B, renders the
 HTML report, and can save it back to Drive.
 
 st.secrets required:
@@ -255,9 +255,9 @@ def df_to_markdown(title: str, df: pd.DataFrame) -> str:
 # ---------------------------------------------------------------------------
 
 def run_gemini_analysis(prompt_text: str, markdown_tables: list[str]) -> str:
-    """Call Gemini 2.0 Flash and return the raw response text."""
+    """Call Gemma 3 27B and return the raw response text."""
     genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
-    model = genai.GenerativeModel("Gemma 3 27B")
+    model = genai.GenerativeModel("gemma-3-27b")
 
     tables_block = "\n\n".join(markdown_tables)
     full_prompt = (
@@ -315,7 +315,7 @@ def main():
     st.title("📊 Barchart AI Report Generator")
     st.caption(
         "從 Google Drive 讀取最新的 $SPX / $NDX gamma & delta 資料，"
-        "透過 Gemini 2.0 Flash 生成量化分析 HTML 報告。"
+        "透過 Gemma 3 27B 生成量化分析 HTML 報告。"
     )
 
     # Input fields for ES and NQ spreads
@@ -448,7 +448,7 @@ def main():
                 st.text(prompt_text)
 
             # 5. Gemini analysis
-            st.write("🤖 呼叫 Gemini 2.0 Flash 生成 HTML 報告…")
+            st.write("🤖 呼叫 Gemma 3 27B 生成 HTML 報告…")
             try:
                 raw_response = run_gemini_analysis(prompt_text, markdown_tables)
                 html_report = extract_html(raw_response)
