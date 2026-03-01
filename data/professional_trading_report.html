@@ -1,0 +1,719 @@
+
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <title>專業期貨曝險戰報 - 2026-03-01</title>
+    <style>
+        :root {
+            --bg: #0f172a; --card: #1e293b; --header: #1e293b; --text: #f8fafc;
+            --primary: #38bdf8; --up: #10b981; --down: #ef4444; --warning: #f59e0b;
+        }
+        body { font-family: 'Inter', system-ui, sans-serif; background: var(--bg); color: var(--text); padding: 20px; }
+        .container { max-width: 1100px; margin: 0 auto; }
+        header { background: var(--header); padding: 25px; border-radius: 12px; border-bottom: 4px solid var(--primary); margin-bottom: 30px; }
+        .market-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; }
+        .card { background: var(--card); border-radius: 16px; padding: 25px; border: 1px solid #334155; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.3); }
+        h2 { color: var(--primary); margin-top: 0; border-bottom: 1px solid #334155; padding-bottom: 10px; }
+        
+        /* GEX Profile Styles */
+        .gex-profile { background: #0a0f1e; padding: 15px; border-radius: 10px; margin: 20px 0; }
+        .chart-row { display: flex; align-items: center; margin-bottom: 3px; height: 16px; }
+        .row-label { width: 60px; font-size: 0.7rem; color: #94a3b8; text-align: right; margin-right: 10px; }
+        .bar-container { flex-grow: 1; height: 100%; position: relative; background: #1e293b44; }
+        .mid-line { position: absolute; left: 50%; top: -2px; bottom: -2px; border-left: 1px dashed #475569; z-index: 5; }
+        .bar { position: absolute; height: 100%; border-radius: 2px; }
+
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th { text-align: left; color: #94a3b8; padding: 10px; border-bottom: 2px solid #334155; }
+        td { padding: 12px 10px; border-bottom: 1px solid #1e293b; font-weight: 500; }
+        .badge { padding: 4px 8px; border-radius: 6px; font-size: 0.75rem; font-weight: bold; }
+        .bg-up { background: rgba(16, 185, 129, 0.2); color: var(--up); }
+        .bg-down { background: rgba(239, 68, 68, 0.2); color: var(--down); }
+        .bg-flip { background: rgba(245, 158, 11, 0.2); color: var(--warning); }
+        
+        .strategy-box { margin-top: 30px; background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); padding: 25px; border-radius: 15px; border-left: 6px solid var(--warning); }
+    </style>
+</head>
+<body>
+<div class="container">
+    <header>
+        <h1 style="margin:0">📈 ES & NQ 深度曝險與交易導航</h1>
+        <p style="color:#94a3b8">基差校準: ES +10.12 | NQ +44.71 | 數據點位: 2026-03-01 22:30</p>
+    </header>
+
+    <div class="market-grid">
+        <div class="card">
+            <h2>ES (标普期貨) 曝險剖面</h2>
+            <div class="gex-profile">
+                
+        <div class="chart-row">
+            <div class="row-label">6790</div>
+            <div class="row-bar-container">
+                <div class="mid-line"></div>
+                <div class="bar" style="right: 50%; width: 7.24%; background: #ef4444;"></div>
+            </div>
+        </div>
+
+        <div class="chart-row">
+            <div class="row-label">6795</div>
+            <div class="row-bar-container">
+                <div class="mid-line"></div>
+                <div class="bar" style="right: 50%; width: 6.15%; background: #ef4444;"></div>
+            </div>
+        </div>
+
+        <div class="chart-row">
+            <div class="row-label">6800</div>
+            <div class="row-bar-container">
+                <div class="mid-line"></div>
+                <div class="bar" style="right: 50%; width: 5.75%; background: #ef4444;"></div>
+            </div>
+        </div>
+
+        <div class="chart-row">
+            <div class="row-label">6805</div>
+            <div class="row-bar-container">
+                <div class="mid-line"></div>
+                <div class="bar" style="right: 50%; width: 6.82%; background: #ef4444;"></div>
+            </div>
+        </div>
+
+        <div class="chart-row">
+            <div class="row-label">6810</div>
+            <div class="row-bar-container">
+                <div class="mid-line"></div>
+                <div class="bar" style="right: 50%; width: 27.56%; background: #ef4444;"></div>
+            </div>
+        </div>
+
+        <div class="chart-row">
+            <div class="row-label">6815</div>
+            <div class="row-bar-container">
+                <div class="mid-line"></div>
+                <div class="bar" style="right: 50%; width: 4.98%; background: #ef4444;"></div>
+            </div>
+        </div>
+
+        <div class="chart-row">
+            <div class="row-label">6820</div>
+            <div class="row-bar-container">
+                <div class="mid-line"></div>
+                <div class="bar" style="right: 50%; width: 8.5%; background: #ef4444;"></div>
+            </div>
+        </div>
+
+        <div class="chart-row">
+            <div class="row-label">6825</div>
+            <div class="row-bar-container">
+                <div class="mid-line"></div>
+                <div class="bar" style="right: 50%; width: 5.74%; background: #ef4444;"></div>
+            </div>
+        </div>
+
+        <div class="chart-row">
+            <div class="row-label">6830</div>
+            <div class="row-bar-container">
+                <div class="mid-line"></div>
+                <div class="bar" style="right: 50%; width: 7.63%; background: #ef4444;"></div>
+            </div>
+        </div>
+
+        <div class="chart-row">
+            <div class="row-label">6835</div>
+            <div class="row-bar-container">
+                <div class="mid-line"></div>
+                <div class="bar" style="right: 50%; width: 11.11%; background: #ef4444;"></div>
+            </div>
+        </div>
+
+        <div class="chart-row">
+            <div class="row-label">6840</div>
+            <div class="row-bar-container">
+                <div class="mid-line"></div>
+                <div class="bar" style="right: 50%; width: 10.2%; background: #ef4444;"></div>
+            </div>
+        </div>
+
+        <div class="chart-row">
+            <div class="row-label">6845</div>
+            <div class="row-bar-container">
+                <div class="mid-line"></div>
+                <div class="bar" style="right: 50%; width: 4.47%; background: #ef4444;"></div>
+            </div>
+        </div>
+
+        <div class="chart-row">
+            <div class="row-label">6850</div>
+            <div class="row-bar-container">
+                <div class="mid-line"></div>
+                <div class="bar" style="right: 50%; width: 7.74%; background: #ef4444;"></div>
+            </div>
+        </div>
+
+        <div class="chart-row">
+            <div class="row-label">6855</div>
+            <div class="row-bar-container">
+                <div class="mid-line"></div>
+                <div class="bar" style="right: 50%; width: 0.11%; background: #ef4444;"></div>
+            </div>
+        </div>
+
+        <div class="chart-row">
+            <div class="row-label">6860</div>
+            <div class="row-bar-container">
+                <div class="mid-line"></div>
+                <div class="bar" style="left: 50%; width: 2.33%; background: #10b981;"></div>
+            </div>
+        </div>
+
+        <div class="chart-row">
+            <div class="row-label">6865</div>
+            <div class="row-bar-container">
+                <div class="mid-line"></div>
+                <div class="bar" style="left: 50%; width: 9.53%; background: #10b981;"></div>
+            </div>
+        </div>
+
+        <div class="chart-row">
+            <div class="row-label">6870</div>
+            <div class="row-bar-container">
+                <div class="mid-line"></div>
+                <div class="bar" style="left: 50%; width: 5.14%; background: #10b981;"></div>
+            </div>
+        </div>
+
+        <div class="chart-row">
+            <div class="row-label">6875</div>
+            <div class="row-bar-container">
+                <div class="mid-line"></div>
+                <div class="bar" style="left: 50%; width: 4.81%; background: #10b981;"></div>
+            </div>
+        </div>
+
+        <div class="chart-row">
+            <div class="row-label">6880</div>
+            <div class="row-bar-container">
+                <div class="mid-line"></div>
+                <div class="bar" style="left: 50%; width: 9.51%; background: #10b981;"></div>
+            </div>
+        </div>
+
+        <div class="chart-row">
+            <div class="row-label">6885</div>
+            <div class="row-bar-container">
+                <div class="mid-line"></div>
+                <div class="bar" style="left: 50%; width: 8.28%; background: #10b981;"></div>
+            </div>
+        </div>
+
+        <div class="chart-row">
+            <div class="row-label">6890</div>
+            <div class="row-bar-container">
+                <div class="mid-line"></div>
+                <div class="bar" style="left: 50%; width: 6.58%; background: #10b981;"></div>
+            </div>
+        </div>
+
+        <div class="chart-row">
+            <div class="row-label">6895</div>
+            <div class="row-bar-container">
+                <div class="mid-line"></div>
+                <div class="bar" style="left: 50%; width: 8.82%; background: #10b981;"></div>
+            </div>
+        </div>
+
+        <div class="chart-row">
+            <div class="row-label">6900</div>
+            <div class="row-bar-container">
+                <div class="mid-line"></div>
+                <div class="bar" style="left: 50%; width: 11.69%; background: #10b981;"></div>
+            </div>
+        </div>
+
+        <div class="chart-row">
+            <div class="row-label">6905</div>
+            <div class="row-bar-container">
+                <div class="mid-line"></div>
+                <div class="bar" style="left: 50%; width: 7.59%; background: #10b981;"></div>
+            </div>
+        </div>
+
+        <div class="chart-row">
+            <div class="row-label">6910</div>
+            <div class="row-bar-container">
+                <div class="mid-line"></div>
+                <div class="bar" style="left: 50%; width: 50.0%; background: #10b981;"></div>
+            </div>
+        </div>
+
+        <div class="chart-row">
+            <div class="row-label">6915</div>
+            <div class="row-bar-container">
+                <div class="mid-line"></div>
+                <div class="bar" style="left: 50%; width: 5.44%; background: #10b981;"></div>
+            </div>
+        </div>
+
+        <div class="chart-row">
+            <div class="row-label">6920</div>
+            <div class="row-bar-container">
+                <div class="mid-line"></div>
+                <div class="bar" style="left: 50%; width: 20.65%; background: #10b981;"></div>
+            </div>
+        </div>
+
+        <div class="chart-row">
+            <div class="row-label">6925</div>
+            <div class="row-bar-container">
+                <div class="mid-line"></div>
+                <div class="bar" style="left: 50%; width: 12.6%; background: #10b981;"></div>
+            </div>
+        </div>
+
+        <div class="chart-row">
+            <div class="row-label">6930</div>
+            <div class="row-bar-container">
+                <div class="mid-line"></div>
+                <div class="bar" style="left: 50%; width: 24.45%; background: #10b981;"></div>
+            </div>
+        </div>
+
+        <div class="chart-row">
+            <div class="row-label">6935</div>
+            <div class="row-bar-container">
+                <div class="mid-line"></div>
+                <div class="bar" style="left: 50%; width: 16.62%; background: #10b981;"></div>
+            </div>
+        </div>
+
+        <div class="chart-row">
+            <div class="row-label">6940</div>
+            <div class="row-bar-container">
+                <div class="mid-line"></div>
+                <div class="bar" style="left: 50%; width: 27.45%; background: #10b981;"></div>
+            </div>
+        </div>
+
+        <div class="chart-row">
+            <div class="row-label">6945</div>
+            <div class="row-bar-container">
+                <div class="mid-line"></div>
+                <div class="bar" style="left: 50%; width: 15.8%; background: #10b981;"></div>
+            </div>
+        </div>
+
+        <div class="chart-row">
+            <div class="row-label">6950</div>
+            <div class="row-bar-container">
+                <div class="mid-line"></div>
+                <div class="bar" style="left: 50%; width: 30.16%; background: #10b981;"></div>
+            </div>
+        </div>
+
+        <div class="chart-row">
+            <div class="row-label">6955</div>
+            <div class="row-bar-container">
+                <div class="mid-line"></div>
+                <div class="bar" style="left: 50%; width: 17.37%; background: #10b981;"></div>
+            </div>
+        </div>
+
+        <div class="chart-row">
+            <div class="row-label">6960</div>
+            <div class="row-bar-container">
+                <div class="mid-line"></div>
+                <div class="bar" style="left: 50%; width: 30.83%; background: #10b981;"></div>
+            </div>
+        </div>
+
+        <div class="chart-row">
+            <div class="row-label">6965</div>
+            <div class="row-bar-container">
+                <div class="mid-line"></div>
+                <div class="bar" style="left: 50%; width: 11.75%; background: #10b981;"></div>
+            </div>
+        </div>
+
+        <div class="chart-row">
+            <div class="row-label">6970</div>
+            <div class="row-bar-container">
+                <div class="mid-line"></div>
+                <div class="bar" style="left: 50%; width: 17.71%; background: #10b981;"></div>
+            </div>
+        </div>
+
+        <div class="chart-row">
+            <div class="row-label">6975</div>
+            <div class="row-bar-container">
+                <div class="mid-line"></div>
+                <div class="bar" style="left: 50%; width: 9.17%; background: #10b981;"></div>
+            </div>
+        </div>
+
+        <div class="chart-row">
+            <div class="row-label">6980</div>
+            <div class="row-bar-container">
+                <div class="mid-line"></div>
+                <div class="bar" style="left: 50%; width: 11.35%; background: #10b981;"></div>
+            </div>
+        </div>
+
+        <div class="chart-row">
+            <div class="row-label">6985</div>
+            <div class="row-bar-container">
+                <div class="mid-line"></div>
+                <div class="bar" style="left: 50%; width: 7.55%; background: #10b981;"></div>
+            </div>
+        </div>
+            </div>
+            <table>
+                <tr><th>點位</th><th>性質</th><th>操作指引</th></tr>
+                <tr><td>6910.12</td><td><span class="badge bg-up">Call Wall</span></td><td style="color:var(--down)">最強壓力/短空點</td></tr>
+                <tr><td>6857.62</td><td><span class="badge bg-flip">Gamma Flip</span></td><td style="color:var(--up)">多空分界/回調買點</td></tr>
+                <tr><td>6810.12</td><td><span class="badge bg-down">Put Wall</span></td><td>終極地板支撐</td></tr>
+            </table>
+        </div>
+
+        <div class="card">
+            <h2>NQ (那指期貨) 曝險剖面</h2>
+            <div class="gex-profile">
+                
+        <div class="chart-row">
+            <div class="row-label">24814</div>
+            <div class="row-bar-container">
+                <div class="mid-line"></div>
+                <div class="bar" style="right: 50%; width: 4.04%; background: #ef4444;"></div>
+            </div>
+        </div>
+
+        <div class="chart-row">
+            <div class="row-label">24824</div>
+            <div class="row-bar-container">
+                <div class="mid-line"></div>
+                <div class="bar" style="right: 50%; width: 0.92%; background: #ef4444;"></div>
+            </div>
+        </div>
+
+        <div class="chart-row">
+            <div class="row-label">24834</div>
+            <div class="row-bar-container">
+                <div class="mid-line"></div>
+                <div class="bar" style="left: 50%; width: 0.45%; background: #10b981;"></div>
+            </div>
+        </div>
+
+        <div class="chart-row">
+            <div class="row-label">24844</div>
+            <div class="row-bar-container">
+                <div class="mid-line"></div>
+                <div class="bar" style="right: 50%; width: 8.93%; background: #ef4444;"></div>
+            </div>
+        </div>
+
+        <div class="chart-row">
+            <div class="row-label">24854</div>
+            <div class="row-bar-container">
+                <div class="mid-line"></div>
+                <div class="bar" style="right: 50%; width: 2.15%; background: #ef4444;"></div>
+            </div>
+        </div>
+
+        <div class="chart-row">
+            <div class="row-label">24864</div>
+            <div class="row-bar-container">
+                <div class="mid-line"></div>
+                <div class="bar" style="left: 50%; width: 2.65%; background: #10b981;"></div>
+            </div>
+        </div>
+
+        <div class="chart-row">
+            <div class="row-label">24874</div>
+            <div class="row-bar-container">
+                <div class="mid-line"></div>
+                <div class="bar" style="right: 50%; width: 4.14%; background: #ef4444;"></div>
+            </div>
+        </div>
+
+        <div class="chart-row">
+            <div class="row-label">24884</div>
+            <div class="row-bar-container">
+                <div class="mid-line"></div>
+                <div class="bar" style="right: 50%; width: 1.3%; background: #ef4444;"></div>
+            </div>
+        </div>
+
+        <div class="chart-row">
+            <div class="row-label">24894</div>
+            <div class="row-bar-container">
+                <div class="mid-line"></div>
+                <div class="bar" style="right: 50%; width: 0.36%; background: #ef4444;"></div>
+            </div>
+        </div>
+
+        <div class="chart-row">
+            <div class="row-label">24904</div>
+            <div class="row-bar-container">
+                <div class="mid-line"></div>
+                <div class="bar" style="left: 50%; width: 1.04%; background: #10b981;"></div>
+            </div>
+        </div>
+
+        <div class="chart-row">
+            <div class="row-label">24914</div>
+            <div class="row-bar-container">
+                <div class="mid-line"></div>
+                <div class="bar" style="left: 50%; width: 1.43%; background: #10b981;"></div>
+            </div>
+        </div>
+
+        <div class="chart-row">
+            <div class="row-label">24924</div>
+            <div class="row-bar-container">
+                <div class="mid-line"></div>
+                <div class="bar" style="right: 50%; width: 4.68%; background: #ef4444;"></div>
+            </div>
+        </div>
+
+        <div class="chart-row">
+            <div class="row-label">24934</div>
+            <div class="row-bar-container">
+                <div class="mid-line"></div>
+                <div class="bar" style="left: 50%; width: 5.06%; background: #10b981;"></div>
+            </div>
+        </div>
+
+        <div class="chart-row">
+            <div class="row-label">24944</div>
+            <div class="row-bar-container">
+                <div class="mid-line"></div>
+                <div class="bar" style="right: 50%; width: 4.2%; background: #ef4444;"></div>
+            </div>
+        </div>
+
+        <div class="chart-row">
+            <div class="row-label">24954</div>
+            <div class="row-bar-container">
+                <div class="mid-line"></div>
+                <div class="bar" style="left: 50%; width: 3.88%; background: #10b981;"></div>
+            </div>
+        </div>
+
+        <div class="chart-row">
+            <div class="row-label">24964</div>
+            <div class="row-bar-container">
+                <div class="mid-line"></div>
+                <div class="bar" style="left: 50%; width: 1.69%; background: #10b981;"></div>
+            </div>
+        </div>
+
+        <div class="chart-row">
+            <div class="row-label">24974</div>
+            <div class="row-bar-container">
+                <div class="mid-line"></div>
+                <div class="bar" style="left: 50%; width: 1.01%; background: #10b981;"></div>
+            </div>
+        </div>
+
+        <div class="chart-row">
+            <div class="row-label">24984</div>
+            <div class="row-bar-container">
+                <div class="mid-line"></div>
+                <div class="bar" style="left: 50%; width: 7.71%; background: #10b981;"></div>
+            </div>
+        </div>
+
+        <div class="chart-row">
+            <div class="row-label">24994</div>
+            <div class="row-bar-container">
+                <div class="mid-line"></div>
+                <div class="bar" style="left: 50%; width: 19.26%; background: #10b981;"></div>
+            </div>
+        </div>
+
+        <div class="chart-row">
+            <div class="row-label">25004</div>
+            <div class="row-bar-container">
+                <div class="mid-line"></div>
+                <div class="bar" style="left: 50%; width: 9.13%; background: #10b981;"></div>
+            </div>
+        </div>
+
+        <div class="chart-row">
+            <div class="row-label">25014</div>
+            <div class="row-bar-container">
+                <div class="mid-line"></div>
+                <div class="bar" style="left: 50%; width: 3.31%; background: #10b981;"></div>
+            </div>
+        </div>
+
+        <div class="chart-row">
+            <div class="row-label">25024</div>
+            <div class="row-bar-container">
+                <div class="mid-line"></div>
+                <div class="bar" style="right: 50%; width: 0.09%; background: #ef4444;"></div>
+            </div>
+        </div>
+
+        <div class="chart-row">
+            <div class="row-label">25034</div>
+            <div class="row-bar-container">
+                <div class="mid-line"></div>
+                <div class="bar" style="left: 50%; width: 11.52%; background: #10b981;"></div>
+            </div>
+        </div>
+
+        <div class="chart-row">
+            <div class="row-label">25044</div>
+            <div class="row-bar-container">
+                <div class="mid-line"></div>
+                <div class="bar" style="left: 50%; width: 3.05%; background: #10b981;"></div>
+            </div>
+        </div>
+
+        <div class="chart-row">
+            <div class="row-label">25054</div>
+            <div class="row-bar-container">
+                <div class="mid-line"></div>
+                <div class="bar" style="left: 50%; width: 0.48%; background: #10b981;"></div>
+            </div>
+        </div>
+
+        <div class="chart-row">
+            <div class="row-label">25064</div>
+            <div class="row-bar-container">
+                <div class="mid-line"></div>
+                <div class="bar" style="left: 50%; width: 6.44%; background: #10b981;"></div>
+            </div>
+        </div>
+
+        <div class="chart-row">
+            <div class="row-label">25074</div>
+            <div class="row-bar-container">
+                <div class="mid-line"></div>
+                <div class="bar" style="left: 50%; width: 4.0%; background: #10b981;"></div>
+            </div>
+        </div>
+
+        <div class="chart-row">
+            <div class="row-label">25084</div>
+            <div class="row-bar-container">
+                <div class="mid-line"></div>
+                <div class="bar" style="left: 50%; width: 18.37%; background: #10b981;"></div>
+            </div>
+        </div>
+
+        <div class="chart-row">
+            <div class="row-label">25094</div>
+            <div class="row-bar-container">
+                <div class="mid-line"></div>
+                <div class="bar" style="left: 50%; width: 8.59%; background: #10b981;"></div>
+            </div>
+        </div>
+
+        <div class="chart-row">
+            <div class="row-label">25104</div>
+            <div class="row-bar-container">
+                <div class="mid-line"></div>
+                <div class="bar" style="left: 50%; width: 9.23%; background: #10b981;"></div>
+            </div>
+        </div>
+
+        <div class="chart-row">
+            <div class="row-label">25114</div>
+            <div class="row-bar-container">
+                <div class="mid-line"></div>
+                <div class="bar" style="left: 50%; width: 12.73%; background: #10b981;"></div>
+            </div>
+        </div>
+
+        <div class="chart-row">
+            <div class="row-label">25124</div>
+            <div class="row-bar-container">
+                <div class="mid-line"></div>
+                <div class="bar" style="left: 50%; width: 0.28%; background: #10b981;"></div>
+            </div>
+        </div>
+
+        <div class="chart-row">
+            <div class="row-label">25134</div>
+            <div class="row-bar-container">
+                <div class="mid-line"></div>
+                <div class="bar" style="left: 50%; width: 0.41%; background: #10b981;"></div>
+            </div>
+        </div>
+
+        <div class="chart-row">
+            <div class="row-label">25144</div>
+            <div class="row-bar-container">
+                <div class="mid-line"></div>
+                <div class="bar" style="left: 50%; width: 30.63%; background: #10b981;"></div>
+            </div>
+        </div>
+
+        <div class="chart-row">
+            <div class="row-label">25154</div>
+            <div class="row-bar-container">
+                <div class="mid-line"></div>
+                <div class="bar" style="left: 50%; width: 11.22%; background: #10b981;"></div>
+            </div>
+        </div>
+
+        <div class="chart-row">
+            <div class="row-label">25164</div>
+            <div class="row-bar-container">
+                <div class="mid-line"></div>
+                <div class="bar" style="left: 50%; width: 7.65%; background: #10b981;"></div>
+            </div>
+        </div>
+
+        <div class="chart-row">
+            <div class="row-label">25174</div>
+            <div class="row-bar-container">
+                <div class="mid-line"></div>
+                <div class="bar" style="left: 50%; width: 1.62%; background: #10b981;"></div>
+            </div>
+        </div>
+
+        <div class="chart-row">
+            <div class="row-label">25184</div>
+            <div class="row-bar-container">
+                <div class="mid-line"></div>
+                <div class="bar" style="left: 50%; width: 50.0%; background: #10b981;"></div>
+            </div>
+        </div>
+
+        <div class="chart-row">
+            <div class="row-label">25194</div>
+            <div class="row-bar-container">
+                <div class="mid-line"></div>
+                <div class="bar" style="left: 50%; width: 17.1%; background: #10b981;"></div>
+            </div>
+        </div>
+
+        <div class="chart-row">
+            <div class="row-label">25204</div>
+            <div class="row-bar-container">
+                <div class="mid-line"></div>
+                <div class="bar" style="left: 50%; width: 7.39%; background: #10b981;"></div>
+            </div>
+        </div>
+            </div>
+            <table>
+                <tr><th>點位</th><th>性質</th><th>操作指引</th></tr>
+                <tr><td>25184.71</td><td><span class="badge bg-up">Call Wall</span></td><td style="color:var(--down)">最強壓力/止盈空點</td></tr>
+                <tr><td>24829.71</td><td><span class="badge bg-flip">Gamma Flip</span></td><td style="color:var(--up)">多空分界/生死線</td></tr>
+                <tr><td>24844.71</td><td><span class="badge bg-down">Put Wall</span></td><td>強力支撐地板</td></tr>
+            </table>
+        </div>
+    </div>
+
+    <div class="strategy-box">
+        <h3 style="margin-top:0; color:var(--warning)">⚡ 核心交易邏輯 (Market Physics)</h3>
+        <p>1. <b>正 Gamma 環境：</b> 目前現價均高於 <b>Gamma Flip</b>，代表莊家處於穩定模式（買跌賣漲）。策略應以「逢低买入」為主，直到價格觸及天花板或跌破分水嶺。</p>
+        <p>2. <b>天花板壓制：</b> 價格接近 <b>Call Wall</b> 時，莊家必須賣出期貨對沖，產生強大物理阻力。建議在 <b>ES 6910 / NQ 25185</b> 附近主動減倉。</p>
+        <p>3. <b>風險轉折：</b> 若 <b>NQ</b> 跌破 <b>24830</b>，市場轉向負 Gamma，波动會瞬間放大。此時多單須撤離。</p>
+    </div>
+</div>
+</body>
+</html>
