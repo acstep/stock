@@ -257,7 +257,7 @@ def df_to_markdown(title: str, df: pd.DataFrame) -> str:
 def run_gemini_analysis(prompt_text: str, markdown_tables: list[str]) -> str:
     """Call Gemini 2.0 Flash and return the raw response text."""
     genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
-    model = genai.GenerativeModel("gemini-2.5-flash")
+    model = genai.GenerativeModel("Gemma 3 27B")
 
     tables_block = "\n\n".join(markdown_tables)
     full_prompt = (
