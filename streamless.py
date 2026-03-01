@@ -30,6 +30,33 @@ def read_local_html(filename: str = "index.html") -> str | None:
         return None
 
 
+def get_latest_html_in_data() -> str | None:
+    """Get the latest HTML file from the data subdirectory."""
+    try:
+        current_dir = Path(__file__).parent
+        data_dir = current_dir / "data"
+        
+        if not data_dir.exists():
+            st.error(f"❌ data 目錄不存在")
+            return None
+        
+        # Find all HTML files
+        html_files = list(data_dir.glob("*.html"))
+        
+        if not html_files:
+            st.error("❌ data 目錄中找不到 HTML 檔案")
+            return None
+        
+        # Get the latest modified file
+        latest_file = max(html_files, key=lambda p: p.stat().st_mtime)
+        
+        with open(latest_file, "r", encoding="utf-8") as f:
+            return f.read()
+    except Exception as e:
+        st.error(f"讀取 data 目錄中的 HTML 檔案時發生錯誤：{e}")
+        return None
+
+
 def read_github_html(url: str) -> str | None:
     """Read HTML content from a GitHub raw URL."""
     try:
@@ -62,13 +89,13 @@ def main():
         layout="wide",
     )
     
-    # Directly read and display index.html
-    html_content = read_local_html("index.html")
+    # Directly read and display latest HTML from data subdirectory
+    html_content = get_latest_html_in_data()
     
     if html_content:
         components.html(html_content, height=800, scrolling=True)
     else:
-        st.error("❌ 找不到 index.html 檔案")
+        st.error("❌ 無法讀取 HTML 檔案")
 
 
 if __name__ == "__main__":
