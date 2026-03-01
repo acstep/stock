@@ -62,63 +62,13 @@ def main():
         layout="wide",
     )
     
-    st.title("📄 HTML Viewer")
-    st.caption("從本地檔案或 GitHub 讀取並顯示 index.html")
+    # Directly read and display index.html
+    html_content = read_local_html("index.html")
     
-    # Create tabs for different input methods
-    tab1, tab2 = st.tabs(["📁 本地檔案", "🌐 GitHub URL"])
-    
-    html_content = None
-    
-    with tab1:
-        st.subheader("讀取本地 index.html")
-        st.info("📂 將會讀取與此腳本同目錄下的 index.html 檔案")
-        
-        if st.button("讀取本地檔案", type="primary", use_container_width=True):
-            with st.spinner("正在讀取檔案..."):
-                html_content = read_local_html()
-                if html_content:
-                    st.success(f"✅ 成功讀取檔案（{len(html_content)} 字元）")
-                    st.session_state["html_content"] = html_content
-                else:
-                    st.error("❌ 找不到 index.html 檔案，請確認檔案存在於同目錄下")
-    
-    with tab2:
-        st.subheader("從 GitHub 讀取 HTML")
-        st.info("💡 可以輸入 GitHub 檔案 URL 或 raw.githubusercontent.com URL")
-        
-        github_url = st.text_input(
-            "GitHub URL",
-            placeholder="https://github.com/user/repo/blob/main/index.html",
-            help="輸入完整的 GitHub 檔案 URL"
-        )
-        
-        if st.button("從 GitHub 讀取", type="primary", use_container_width=True):
-            if github_url:
-                with st.spinner("正在從 GitHub 讀取..."):
-                    html_content = read_github_html(github_url)
-                    if html_content:
-                        st.success(f"✅ 成功讀取檔案（{len(html_content)} 字元）")
-                        st.session_state["html_content"] = html_content
-            else:
-                st.warning("請先輸入 GitHub URL")
-    
-    # Display HTML content
-    if "html_content" in st.session_state and st.session_state["html_content"]:
-        st.divider()
-        st.subheader("📋 HTML 預覽")
-        
-        # Option to show source code
-        with st.expander("🔍 查看原始碼", expanded=False):
-            st.code(st.session_state["html_content"], language="html")
-        
-        # Render HTML
-        st.markdown("### 渲染結果")
-        components.html(
-            st.session_state["html_content"],
-            height=800,
-            scrolling=True
-        )
+    if html_content:
+        components.html(html_content, height=800, scrolling=True)
+    else:
+        st.error("❌ 找不到 index.html 檔案")
 
 
 if __name__ == "__main__":
