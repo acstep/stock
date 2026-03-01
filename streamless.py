@@ -90,6 +90,15 @@ def read_html_file(file_path: Path) -> str | None:
         return None
 
 
+def estimate_html_height(html_content: str) -> int:
+    """Estimate HTML height based on content length."""
+    # 基於內容長度估算高度，每1000個字符約等於400px
+    content_length = len(html_content)
+    estimated_height = max(2000, (content_length // 1000) * 400 + 1000)
+    # 設置上限為20000px
+    return min(estimated_height, 20000)
+
+
 # ---------------------------------------------------------------------------
 # Yahoo Finance helpers
 # ---------------------------------------------------------------------------
@@ -236,7 +245,9 @@ def main():
         
         if html_content:
             st.divider()
-            components.html(html_content, height=3000, scrolling=False)
+            # 自動計算 HTML 高度
+            html_height = estimate_html_height(html_content)
+            components.html(html_content, height=html_height, scrolling=False)
         else:
             st.error("❌ 無法讀取 HTML 檔案")
     else:
