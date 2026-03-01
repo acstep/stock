@@ -247,6 +247,7 @@ def main():
                 es_1m_today = es_1m_data[es_1m_data.index.date == latest_date]
                 
                 if not es_1m_today.empty:
+                    es_1m_today = calculate_bollinger_bands(es_1m_today, window=20)
                     st.caption(f"數據日期：{latest_date}")
                     fig_es_1m = create_candlestick_chart(es_1m_today, "ES 一分鐘K線圖")
                     st.plotly_chart(fig_es_1m, use_container_width=True)
@@ -262,6 +263,7 @@ def main():
                 nq_1m_today = nq_1m_data[nq_1m_data.index.date == latest_date]
                 
                 if not nq_1m_today.empty:
+                    nq_1m_today = calculate_bollinger_bands(nq_1m_today, window=20)
                     st.caption(f"數據日期：{latest_date}")
                     fig_nq_1m = create_candlestick_chart(nq_1m_today, "NQ 一分鐘K線圖")
                     st.plotly_chart(fig_nq_1m, use_container_width=True)
