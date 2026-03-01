@@ -92,11 +92,11 @@ def read_html_file(file_path: Path) -> str | None:
 
 def estimate_html_height(html_content: str) -> int:
     """Estimate HTML height based on content length."""
-    # 基於內容長度估算高度，每1000個字符約等於25px
+    # 基於內容長度估算高度，每1000個字符約等於20px
     content_length = len(html_content)
-    estimated_height = max(600, (content_length // 1000) * 25 + 50)
-    # 設置上限為6000px
-    return min(estimated_height, 6000)
+    estimated_height = max(500, (content_length // 1000) * 20 + 30)
+    # 設置上限為5000px
+    return min(estimated_height, 5000)
 
 
 # ---------------------------------------------------------------------------
