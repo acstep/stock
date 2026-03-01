@@ -89,8 +89,8 @@ def calculate_bollinger_bands(df: pd.DataFrame, window: int = 20, num_std: float
     return df
 
 
-def create_candlestick_chart(df: pd.DataFrame, title: str) -> go.Figure:
-    """Create a candlestick chart with Bollinger Bands."""
+def create_candlestick_chart(df: pd.DataFrame, title: str, show_bollinger: bool = True) -> go.Figure:
+    """Create a candlestick chart with optional Bollinger Bands."""
     fig = go.Figure()
     
     # Candlestick
@@ -105,32 +105,33 @@ def create_candlestick_chart(df: pd.DataFrame, title: str) -> go.Figure:
         decreasing_line_color='green'
     ))
     
-    # Bollinger Bands
-    fig.add_trace(go.Scatter(
-        x=df.index,
-        y=df['Upper'],
-        name='上軌',
-        line=dict(color='rgba(250, 128, 114, 0.5)', width=1),
-        mode='lines'
-    ))
-    
-    fig.add_trace(go.Scatter(
-        x=df.index,
-        y=df['SMA'],
-        name='中軌 (SMA20)',
-        line=dict(color='orange', width=1.5),
-        mode='lines'
-    ))
-    
-    fig.add_trace(go.Scatter(
-        x=df.index,
-        y=df['Lower'],
-        name='下軌',
-        line=dict(color='rgba(173, 216, 230, 0.5)', width=1),
-        mode='lines',
-        fill='tonexty',
-        fillcolor='rgba(173, 216, 230, 0.1)'
-    ))
+    # Bollinger Bands (only if show_bollinger is True and columns exist)
+    if show_bollinger and 'Upper' in df.columns:
+        fig.add_trace(go.Scatter(
+            x=df.index,
+            y=df['Upper'],
+            name='上軌',
+            line=dict(color='rgba(250, 128, 114, 0.5)', width=1),
+            mode='lines'
+        ))
+        
+        fig.add_trace(go.Scatter(
+            x=df.index,
+            y=df['SMA'],
+            name='中軌 (SMA20)',
+            line=dict(color='orange', width=1.5),
+            mode='lines'
+        ))
+        
+        fig.add_trace(go.Scatter(
+            x=df.index,
+            y=df['Lower'],
+            name='下軌',
+            line=dict(color='rgba(173, 216, 230, 0.5)', width=1),
+            mode='lines',
+            fill='tonexty',
+            fillcolor='rgba(173, 216, 230, 0.1)'
+        ))
     
     fig.update_layout(
         title=title,
@@ -247,9 +248,8 @@ def main():
                 es_1m_today = es_1m_data[es_1m_data.index.date == latest_date]
                 
                 if not es_1m_today.empty:
-                    es_1m_today = calculate_bollinger_bands(es_1m_today, window=20)
                     st.caption(f"數據日期：{latest_date}")
-                    fig_es_1m = create_candlestick_chart(es_1m_today, "ES 一分鐘K線圖")
+                    fig_es_1m = create_candlestick_chart(es_1m_today, "ES 一分鐘K線圖", show_bollinger=False)
                     st.plotly_chart(fig_es_1m, use_container_width=True)
     
     with col4:
@@ -263,9 +263,8 @@ def main():
                 nq_1m_today = nq_1m_data[nq_1m_data.index.date == latest_date]
                 
                 if not nq_1m_today.empty:
-                    nq_1m_today = calculate_bollinger_bands(nq_1m_today, window=20)
                     st.caption(f"數據日期：{latest_date}")
-                    fig_nq_1m = create_candlestick_chart(nq_1m_today, "NQ 一分鐘K線圖")
+                    fig_nq_1m = create_candlestick_chart(nq_1m_today, "NQ 一分鐘K線圖", show_bollinger=False)
                     st.plotly_chart(fig_nq_1m, use_container_width=True)
 
 
