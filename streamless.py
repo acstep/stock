@@ -256,9 +256,8 @@ def main():
         
         if html_content:
             st.divider()
-            # 自動計算 HTML 高度
-            html_height = estimate_html_height(html_content)
-            components.html(html_content, height=html_height, scrolling=False)
+            # 使用 markdown 顯示 HTML，自動適應高度
+            st.markdown(html_content, unsafe_allow_html=True)
         else:
             st.error("❌ 無法讀取 HTML 檔案")
     else:
