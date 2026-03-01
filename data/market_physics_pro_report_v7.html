@@ -102,15 +102,9 @@
       margin: 12px 0 16px 0;
       text-align: center;
     }
-    #canvas-wrap {
-      display: flex;
-      gap: 24px;
-      flex-wrap: wrap;
-      align-items: flex-start;
-      margin: 12px 0 4px 0;
-    }
-    canvas {
-      background-color: #050814;
+    figure img {
+      max-width: 100%;
+      height: auto;
       border: 1px solid #333;
       border-radius: 4px;
     }
@@ -141,25 +135,20 @@
 <hr>
 
 <div class="section">
-  <h2>1. ES / NQ Gamma Force Field（Canvas 版）</h2>
+  <h2>1. ES / NQ Gamma Force Field 圖</h2>
 
   <p>
-    下方兩個 Canvas 分別繪出 2026-02-27 收盤前，ES 與 NQ 在現價附近 ±120 / ±500 點區間的 Net Gamma Force Field。橫向條長度為 Gamma 名目曝險（約百萬 USD），綠色為正 Gamma、紅色為負 Gamma；水平線分別標示 Spot、Flip、Call Wall（CW）、Put Wall（PW）。
+    下圖為 2026-02-27 收盤前的 ES（左）與 NQ（右） Gamma Force Field；橫軸為 Gamma 曝險（約百萬 USD），縱軸為對應 ES / NQ 期貨價。 [chart:29]
   </p>
 
-  <div id="canvas-wrap">
-    <div>
-      anvas id="esCanvas" width="600" height="500"></canvas>
-      <figcaption>圖 1：ES Gamma Force Field（2/27 收盤前，現價 ±120 點）</figcaption>
-    </div>
-    <div>
-      anvas id="nqCanvas" width="600" height="500"></canvas>
-      <figcaption>圖 2：NQ Gamma Force Field（2/27 收盤前，現價 ±500 點）</figcaption>
-    </div>
-  </div>
+  <figure>
+    <img src="https://ppl-ai-code-interpreter-files.s3.amazonaws.com/web/direct-files/3a7177f9d4227fc26943e02655ee0269/9cd82de4-0027-4821-abf5-66e0c4937e6a/98fd8755.png"
+         alt="ES / NQ Gamma Force Field 2026-02-27 03:30">
+    <figcaption>圖 1：ES（左）與 NQ（右）於 2026-02-27 收盤前的 Gamma Force Field。</figcaption>
+  </figure>
 
   <p class="note">
-    註：本 Canvas 使用與你 Python 程式相同的 de>process_gamma_physics_v6</code> 邏輯計算 Spot / Flip / CW / PW，並使用 de>GEX_M = NetGamma / 1e8 × 100</code> 作為橫向條長度。
+    註：綠色橫條代表正 Gamma（吸波，做市商傾向賣高買低），紅色橫條代表負 Gamma（放大波動，做市商傾向追高殺低）。黃線為 Spot，青線為 Gamma Flip，萊姆綠線為 Call Wall，洋紅線為 Put Wall。 [chart:29]
   </p>
 </div>
 
@@ -280,8 +269,6 @@
 <div class="section">
   <h2>3. 交易 Playbook – ES / NQ（簡表）</h2>
 
-  <p>以下保留原本的操作邏輯摘要，方便你對照 Canvas 圖直接執行盤中決策。</p>
-
   <h3>3.1 ES – 關鍵價位操作摘要</h3>
   <table>
     <thead>
@@ -364,158 +351,6 @@
     </tbody>
   </table>
 </div>
-
-<script>
-  // 由 Python 計算出的 2/27 ES/NQ 視窗 GEX_M + Futures 數據
-  const esData = {
-    spot: 6910.12,
-    flip: 6900.12,
-    cw: 6910.12,
-    pw: 6860.12,
-    futs: [6815.12,6820.12,6825.12,6830.12,6835.12,6840.12,6845.12,6850.12,6855.12,6860.12,6865.12,6870.12,6875.12,6880.12,6885.12,6890.12,6895.12,6900.12,6905.12,6910.12],
-    gexm:[-11.66,-19.27,-22.5,-36.62,-40.79,-58.51,-47.54,-63.22,-52.62,-75.76,-44.34,-60.17,-45.34,-11.98,-23.85,13.65,-7.62,3.01,21.95,40.24]
-  };
-
-  const nqData = {
-    spot: 24984.71,
-    flip: 24994.71,
-    cw: 24994.71,
-    pw: 24894.71,
-    futs: [24834.71,24844.71,24854.71,24864.71,24869.71,24874.71,24884.71,24894.71,24904.71,24914.71,24919.71,24924.71,24934.71,24944.71,24954.71,24964.71,24969.71,24974.71,24984.71,24994.71],
-    gexm:[0.12,-3.22,-0.53,-0.33,-0.78,-1.21,-1.42,-4.02,0.04,-1.13,-0.62,-0.87,-0.08,-2.4,-0.99,-0.37,-0.83,-0.5,-1.44,0.53]
-  };
-
-  function drawForceField(canvas, data, symbol) {
-    const ctx = canvas.getContext('2d');
-    const W = canvas.width;
-    const H = canvas.height;
-
-    ctx.clearRect(0, 0, W, H);
-
-    const futs = data.futs;
-    const gex = data.gexm;
-
-    const minF = Math.min(...futs);
-    const maxF = Math.max(...futs);
-    const minG = Math.min(...gex);
-    const maxG = Math.max(...gex);
-
-    const marginL = 60;
-    const marginR = 20;
-    const marginT = 20;
-    const marginB = 30;
-    const plotW = W - marginL - marginR;
-    const plotH = H - marginT - marginB;
-
-    function yScale(f) {
-      return marginT + plotH - ( (f - minF) / (maxF - minF) ) * plotH;
-    }
-    const maxAbsG = Math.max(Math.abs(minG), Math.abs(maxG)) || 1;
-    function xScale(g) {
-      return (g / maxAbsG) * (plotW * 0.45);
-    }
-
-    // 背景與座標軸
-    ctx.fillStyle = '#050814';
-    ctx.fillRect(marginL, marginT, plotW, plotH);
-
-    ctx.strokeStyle = '#444';
-    ctx.lineWidth = 1;
-    ctx.beginPath();
-    ctx.moveTo(marginL, marginT);
-    ctx.lineTo(marginL, marginT + plotH);
-    ctx.lineTo(marginL + plotW, marginT + plotH);
-    ctx.stroke();
-
-    // 中心垂直線（Gamma ~ 0）
-    ctx.strokeStyle = '#2c3e50';
-    ctx.setLineDash([4, 4]);
-    ctx.beginPath();
-    const xZero = marginL + plotW * 0.5;
-    ctx.moveTo(xZero, marginT);
-    ctx.lineTo(xZero, marginT + plotH);
-    ctx.stroke();
-    ctx.setLineDash([]);
-
-    // 畫 bar
-    const n = futs.length;
-    const barH = plotH / n * 0.7;
-
-    for (let i = 0; i < n; i++) {
-      const f = futs[i];
-      const g = gex[i];
-      const y = yScale(f) - barH / 2;
-      const w = xScale(g);
-
-      ctx.fillStyle = g >= 0 ? '#00FF66' : '#FF3333';
-
-      if (g >= 0) {
-        ctx.fillRect(xZero, y, Math.max(1, w), barH);
-      } else {
-        ctx.fillRect(xZero + w, y, Math.max(1, -w), barH);
-      }
-    }
-
-    // 劃 Spot / Flip / CW / PW 水平線
-    function drawLine(price, color, style, label) {
-      const y = yScale(price);
-      ctx.strokeStyle = color;
-      ctx.lineWidth = 1.2;
-      if (style === 'dash') {
-        ctx.setLineDash([6, 4]);
-      } else if (style === 'dot') {
-        ctx.setLineDash([2, 4]);
-      } else {
-        ctx.setLineDash([]);
-      }
-      ctx.beginPath();
-      ctx.moveTo(marginL, y);
-      ctx.lineTo(marginL + plotW, y);
-      ctx.stroke();
-      ctx.setLineDash([]);
-
-      // label
-      ctx.fillStyle = color;
-      ctx.font = '11px sans-serif';
-      ctx.fillText(label + ' ' + price.toFixed(0), marginL + 4, y - 3);
-    }
-
-    drawLine(data.spot, 'yellow', 'solid', 'Spot');
-    drawLine(data.flip, '#00bcd4', 'dash', 'Flip');
-    drawLine(data.cw, '#8bc34a', 'solid', 'CW');
-    drawLine(data.pw, '#e91e63', 'dot', 'PW');
-
-    // Y 軸刻度
-    ctx.fillStyle = '#b0bec5';
-    ctx.font = '10px sans-serif';
-    const ticks = 5;
-    for (let i = 0; i <= ticks; i++) {
-      const t = minF + (maxF - minF) * (i / ticks);
-      const y = yScale(t);
-      ctx.fillText(t.toFixed(0), 5, y + 3);
-      ctx.strokeStyle = '#222';
-      ctx.lineWidth = 0.5;
-      ctx.beginPath();
-      ctx.moveTo(marginL, y);
-      ctx.lineTo(marginL + plotW, y);
-      ctx.stroke();
-    }
-
-    // 標題
-    ctx.fillStyle = '#ffffff';
-    ctx.font = '13px sans-serif';
-    ctx.fillText(symbol + ' Gamma Force Field (2026-02-27)', marginL, 14);
-    ctx.font = '11px sans-serif';
-    ctx.fillText('Bar = Net Gamma Exposure (approx. 百萬 USD)', marginL, H - 5);
-  }
-
-  window.addEventListener('load', function() {
-    const esCanvas = document.getElementById('esCanvas');
-    const nqCanvas = document.getElementById('nqCanvas');
-    drawForceField(esCanvas, esData, 'ES');
-    drawForceField(nqCanvas, nqData, 'NQ');
-  });
-</script>
 
 </body>
 </html>
