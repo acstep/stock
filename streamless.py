@@ -442,6 +442,11 @@ def main():
             )
             prompt_text = spread_info + prompt_text
 
+            # Display full prompt
+            st.write("📝 完整提示詞：")
+            with st.expander("點擊查看完整提示詞內容", expanded=False):
+                st.text(prompt_text)
+
             # 5. Gemini analysis
             st.write("🤖 呼叫 Gemini 2.0 Flash 生成 HTML 報告…")
             try:
