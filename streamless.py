@@ -65,11 +65,11 @@ def get_latest_html_in_data() -> str | None:
 # Yahoo Finance helpers
 # ---------------------------------------------------------------------------
 
-def get_futures_data(symbol: str, period: str = "3mo") -> pd.DataFrame | None:
+def get_futures_data(symbol: str, period: str = "3mo", interval: str = "1d") -> pd.DataFrame | None:
     """Fetch futures data from Yahoo Finance."""
     try:
         ticker = yf.Ticker(symbol)
-        df = ticker.history(period=period)
+        df = ticker.history(period=period, interval=interval)
         if df.empty:
             st.warning(f"⚠️ 無法獲取 {symbol} 數據")
             return None
@@ -229,6 +229,28 @@ def main():
                 
                 fig_nq = create_candlestick_chart(nq_data, "NQ 日K線圖 + 布林通道")
                 st.plotly_chart(fig_nq, use_container_width=True)
+    
+    # Display 1-minute charts
+    st.divider()
+    st.subheader("📊 ES & NQ 一分鐘線圖")
+    
+    col3, col4 = st.columns(2)
+    
+    with col3:
+        st.markdown("### ES 一分鐘線圖")
+        with st.spinner("正在獲取 ES 一分鐘數據..."):
+            es_1m_data = get_futures_data("ES=F", period="1d", interval="1m")
+            if es_1m_data is not None:
+                fig_es_1m = create_candlestick_chart(es_1m_data, "ES 一分鐘K線圖")
+                st.plotly_chart(fig_es_1m, use_container_width=True)
+    
+    with col4:
+        st.markdown("### NQ 一分鐘線圖")
+        with st.spinner("正在獲取 NQ 一分鐘數據..."):
+            nq_1m_data = get_futures_data("NQ=F", period="1d", interval="1m")
+            if nq_1m_data is not None:
+                fig_nq_1m = create_candlestick_chart(nq_1m_data, "NQ 一分鐘K線圖")
+                st.plotly_chart(fig_nq_1m, use_container_width=True)
 
 
 if __name__ == "__main__":
