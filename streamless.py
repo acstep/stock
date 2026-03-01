@@ -94,16 +94,20 @@ def estimate_html_height(html_content: str) -> int:
     """Estimate HTML height based on content length."""
     # 計算行數來估算高度
     lines = html_content.count('\n')
-    # 基本高度 + 行數 * 每行平均高度
-    line_based = 500 + (lines * 2)
+    # 基本高度 + 行數 * 每行平均高度 (增加係數)
+    line_based = 800 + (lines * 5)
     
-    # 同時考慮內容長度
+    # 同時考慮內容長度 (增加係數)
     content_length = len(html_content)
-    content_based = (content_length // 500) * 15
+    content_based = (content_length // 200) * 20
     
-    # 取兩者較大值，設定最小值1000px，最大值50000px
-    estimated_height = max(line_based, content_based, 1000)
-    return min(estimated_height, 50000)
+    # 檢查是否有表格或複雜結構
+    table_count = html_content.count('<table') + html_content.count('<tr')
+    table_bonus = table_count * 30
+    
+    # 取最大值，設定最小值2000px，最大值100000px
+    estimated_height = max(line_based, content_based, 2000) + table_bonus
+    return min(estimated_height, 100000)
 
 
 # ---------------------------------------------------------------------------
