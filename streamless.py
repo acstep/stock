@@ -318,6 +318,27 @@ def main():
         "透過 Gemini 2.0 Flash 生成量化分析 HTML 報告。"
     )
 
+    # Input fields for ES and NQ spreads
+    col1, col2 = st.columns(2)
+    with col1:
+        es_spread = st.number_input(
+            "ES = SPX + 多少點？",
+            min_value=-100.0,
+            max_value=100.0,
+            value=0.0,
+            step=0.25,
+            help="輸入 ES 相對於 SPX 的點差"
+        )
+    with col2:
+        nq_spread = st.number_input(
+            "NQ = NDX + 多少點？",
+            min_value=-100.0,
+            max_value=100.0,
+            value=0.0,
+            step=0.25,
+            help="輸入 NQ 相對於 NDX 的點差"
+        )
+
     # Session state init
     if "html_report" not in st.session_state:
         st.session_state["html_report"] = None
@@ -413,6 +434,13 @@ def main():
                 )
             else:
                 st.write(f"  ✅ 已讀取提示詞（{len(prompt_text)} 字元）")
+
+            # Add ES/NQ spread info to the beginning of prompt
+            spread_info = (
+                f"目前 ES = SPX + {es_spread} 點。NQ = NDX + {nq_spread} 點。"
+                f"數據內是 SPX 以及 NDX 的資料。你的分析結果請用 ES 跟 NQ 點數來告訴我。\n\n"
+            )
+            prompt_text = spread_info + prompt_text
 
             # 5. Gemini analysis
             st.write("🤖 呼叫 Gemini 2.0 Flash 生成 HTML 報告…")
